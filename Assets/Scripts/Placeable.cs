@@ -9,6 +9,7 @@ public class Placeable : MonoBehaviour, ISelectable
     public Color validPlacementColor = Color.green;
     public Color invalidPlacementColor = Color.red;
     public Color obstructPlacementColor = Color.yellow;
+    public Sprite UIIcon;
 
     private float yOffsetWhenPlacing = 0.01f;
     private bool previousValidPosition;
