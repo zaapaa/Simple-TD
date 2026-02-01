@@ -93,8 +93,7 @@ public class Placeable : MonoBehaviour, ISelectable
 
     private bool CheckClearance(Vector3 position, bool excludeObstructing = false)
     {
-        // Use spherical check instead of box collider overlap
-        Collider[] allColliders = Physics.OverlapSphere(position, placementRadius * 2); // Larger radius to catch all potential colliders
+        Collider[] allColliders = Physics.OverlapSphere(position, placementRadius * 2);
         
         for (int i = 0; i < allColliders.Length; i++)
         {
@@ -103,28 +102,20 @@ public class Placeable : MonoBehaviour, ISelectable
                 continue;
             }
             
-            // Calculate actual distance between centers
-            float distance = Vector3.Distance(position, allColliders[i].transform.position);
-            float combinedRadius = placementRadius;
-            
-            // If the other object is also a Placeable, use its placement radius
-            if (allColliders[i].CompareTag("Placeable"))
+            if (excludeObstructing && allColliders[i].gameObject == obstructingPlaceable)
             {
-                var otherPlaceable = allColliders[i].GetComponent<Placeable>();
-                if (otherPlaceable != null)
-                {
-                    combinedRadius += otherPlaceable.placementRadius;
-                }
+                continue;
             }
             
-            // Check if objects are actually overlapping (using spherical distance)
-            if (distance < combinedRadius)
+            // Handle different object types with appropriate collision detection
+            if (allColliders[i].CompareTag("Placeable"))
             {
-                if (excludeObstructing && allColliders[i].gameObject == obstructingPlaceable)
-                {
-                    continue;
-                }
-                if (allColliders[i].CompareTag("Placeable"))
+                // Use spherical distance for placeables
+                float distance = Vector3.Distance(position, allColliders[i].transform.position);
+                var otherPlaceable = allColliders[i].GetComponent<Placeable>();
+                float combinedRadius = placementRadius + (otherPlaceable?.placementRadius ?? placementRadius);
+                
+                if (distance < combinedRadius)
                 {
                     if (excludeObstructing)
                     {
@@ -142,18 +133,46 @@ public class Placeable : MonoBehaviour, ISelectable
                         return true;
                     }
                 }
-                if (allColliders[i].CompareTag("Wall") || allColliders[i].CompareTag("Enemy"))
+            }
+            else if (allColliders[i].CompareTag("Wall"))
+            {
+                // Use actual collider bounds for walls (handles non-equilateral shapes)
+                if (IsCollidingWithWall(position, allColliders[i]))
+                {
+                    obstructingPlaceable = null;
+                    return false;
+                }
+            }
+            else if (allColliders[i].CompareTag("Enemy"))
+            {
+                // Use spherical distance for enemies (assuming they're roughly circular)
+                float distance = Vector3.Distance(position, allColliders[i].transform.position);
+                if (distance < placementRadius)
                 {
                     obstructingPlaceable = null;
                     return false;
                 }
             }
         }
+        
         if (!excludeObstructing && obstructingPlaceable != null)
         {
             obstructingPlaceable = null;
         }
         return true;
+    }
+    
+    private bool IsCollidingWithWall(Vector3 position, Collider wallCollider)
+    {
+        // Use the wall's actual collider bounds for accurate detection
+        Bounds wallBounds = wallCollider.bounds;
+        
+        // Create a bounds for the placeable at the given position
+        Vector3 placeableSize = Vector3.one * (placementRadius * 2);
+        Bounds placeableBounds = new Bounds(position, placeableSize);
+        
+        // Check if the bounds intersect
+        return wallBounds.Intersects(placeableBounds);
     }
 
     private bool AdjustPlacementOnObstruction(Vector3 position)
