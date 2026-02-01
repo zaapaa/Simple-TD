@@ -26,6 +26,7 @@ public class IconManager : MonoBehaviour
         {
             iconHandler.SetCount(0);
             iconHandler.selectableType = null;
+            iconHandler.Hide();
         }
 
         int iconCount = 0;

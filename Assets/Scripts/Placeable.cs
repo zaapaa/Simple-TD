@@ -31,7 +31,7 @@ public class Placeable : MonoBehaviour, ISelectable
     }
 
     // Update is called once per frame
-    void Update()
+    protected virtual void Update()
     {
         if (isBeingPlaced)
         {
@@ -47,7 +47,7 @@ public class Placeable : MonoBehaviour, ISelectable
             if (obstructingPlaceable != null)
             {
                 validPosition = AdjustPlacementOnObstruction(mousePosition);
-                // Debug.Log($"Valid position after adjustment: {validPosition}");
+                Debug.Log($"Valid position after adjustment: {validPosition}");
             }
             if (firstPlacementCheck)
             {
@@ -93,39 +93,60 @@ public class Placeable : MonoBehaviour, ISelectable
 
     private bool CheckClearance(Vector3 position, bool excludeObstructing = false)
     {
-        Collider[] colliders = Physics.OverlapSphere(position, placementRadius);
-        for (int i = 0; i < colliders.Length; i++)
+        // Use spherical check instead of box collider overlap
+        Collider[] allColliders = Physics.OverlapSphere(position, placementRadius * 2); // Larger radius to catch all potential colliders
+        
+        for (int i = 0; i < allColliders.Length; i++)
         {
-            if (colliders[i].gameObject == gameObject)
+            if (allColliders[i].gameObject == gameObject)
             {
                 continue;
             }
-            if (excludeObstructing && colliders[i].gameObject == obstructingPlaceable)
+            
+            // Calculate actual distance between centers
+            float distance = Vector3.Distance(position, allColliders[i].transform.position);
+            float combinedRadius = placementRadius;
+            
+            // If the other object is also a Placeable, use its placement radius
+            if (allColliders[i].CompareTag("Placeable"))
             {
-                continue;
-            }
-            if (colliders[i].CompareTag("Placeable"))
-            {
-                if (excludeObstructing)
+                var otherPlaceable = allColliders[i].GetComponent<Placeable>();
+                if (otherPlaceable != null)
                 {
-                    float obstructingDistance = Vector3.Distance(position, obstructingPlaceable.transform.position);
-                    float currentIndexDistance = Vector3.Distance(position, colliders[i].transform.position);
-                    if (currentIndexDistance < obstructingDistance)
+                    combinedRadius += otherPlaceable.placementRadius;
+                }
+            }
+            
+            // Check if objects are actually overlapping (using spherical distance)
+            if (distance < combinedRadius)
+            {
+                if (excludeObstructing && allColliders[i].gameObject == obstructingPlaceable)
+                {
+                    continue;
+                }
+                if (allColliders[i].CompareTag("Placeable"))
+                {
+                    if (excludeObstructing)
                     {
-                        obstructingPlaceable = colliders[i].gameObject;
+                        float obstructingDistance = Vector3.Distance(position, obstructingPlaceable.transform.position);
+                        float currentIndexDistance = Vector3.Distance(position, allColliders[i].transform.position);
+                        if (currentIndexDistance < obstructingDistance)
+                        {
+                            obstructingPlaceable = allColliders[i].gameObject;
+                        }
+                        return false;
                     }
+                    else
+                    {
+                        obstructingPlaceable = allColliders[i].gameObject;
+                        return true;
+                    }
+                }
+                if (allColliders[i].CompareTag("Wall") || allColliders[i].CompareTag("Enemy"))
+                {
+                    obstructingPlaceable = null;
                     return false;
                 }
-                else
-                {
-                    obstructingPlaceable = colliders[i].gameObject;
-                    return true;
-                }
-            }
-            if (colliders[i].CompareTag("Wall") || colliders[i].CompareTag("Enemy"))
-            {
-                obstructingPlaceable = null;
-                return false;
             }
         }
         if (!excludeObstructing && obstructingPlaceable != null)
@@ -138,6 +159,9 @@ public class Placeable : MonoBehaviour, ISelectable
     private bool AdjustPlacementOnObstruction(Vector3 position)
     {
         Vector3 obstructionPosition = obstructingPlaceable.transform.position;
+
+        position.y = 0f;
+        obstructionPosition.y = 0f;
 
         // Calculate direction from obstruction to position
         Vector3 direction = (position - obstructionPosition).normalized;
@@ -153,7 +177,7 @@ public class Placeable : MonoBehaviour, ISelectable
 
         // Set new position
         Vector3 newPosition = obstructionPosition + direction * distance;
-        newPosition.y = 0f + yOffsetWhenPlacing; // Maintain the same height
+        newPosition.y = yOffsetWhenPlacing; // Maintain the same height
 
         transform.position = newPosition;
         if (CheckClearance(newPosition, true))
@@ -192,7 +216,7 @@ public class Placeable : MonoBehaviour, ISelectable
         return isSelected;
     }
 
-    public Type GetSelectableType()
+    public virtual Type GetSelectableType()
     {
         return typeof(Placeable);
     }

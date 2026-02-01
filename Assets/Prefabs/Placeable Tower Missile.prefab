@@ -755,7 +755,7 @@ GameObject:
   - component: {fileID: 4696868290807795750}
   m_Layer: 0
   m_Name: Sphere
-  m_TagString: Untagged
+  m_TagString: PlaceablePart
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -885,10 +885,10 @@ Transform:
   m_LocalScale: {x: 3, y: 3, z: 3}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 8813941646807811197}
-  - {fileID: 2771992136723759927}
   - {fileID: 6282312813324006110}
   - {fileID: 8625543259901845269}
+  - {fileID: 8813941646807811197}
+  - {fileID: 2771992136723759927}
   - {fileID: 8266294922455506460}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -984,7 +984,7 @@ GameObject:
   - component: {fileID: 127192831411585548}
   m_Layer: 0
   m_Name: Barrel
-  m_TagString: Untagged
+  m_TagString: PlaceablePart
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

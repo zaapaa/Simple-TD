@@ -29,7 +29,7 @@ public class IconHandler : MonoBehaviour
         {
             if (count > 1)
             {
-                countText.GetComponent<TextMeshProUGUI>().text = count.ToString();
+                countText.GetComponent<TextMeshProUGUI>().text = $"x{count}";
             }
             else
             {

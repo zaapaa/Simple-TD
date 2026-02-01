@@ -12,10 +12,10 @@ public class GameUIHandler : MonoBehaviour
     private List<ISelectable> selectedObjects = new List<ISelectable>();
     public IconManager iconManager;
     public List<GameObject> placedObjects = new List<GameObject>();
+    public TargetPriorityUIManager targetPriorityUIManager;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-
     }
 
     // Update is called once per frame
@@ -85,9 +85,10 @@ public class GameUIHandler : MonoBehaviour
             var ray = Camera.main.ScreenPointToRay(mousePosition);
             if (Physics.Raycast(ray, out RaycastHit hit))
             {
-                GameObject placementObject = Instantiate(placeablePrefabs[0], hit.point, Quaternion.Euler(0, placementAngle, 0));
+                GameObject placementObject = Instantiate(placeablePrefabs[1], hit.point, Quaternion.Euler(0, placementAngle, 0));
                 placementObject.GetComponent<Placeable>().isBeingPlaced = true;
                 currentPlacement = placementObject;
+                Debug.Log($"Placed object {placementObject.name} at {hit.point}");
             }
         }
     }
@@ -127,7 +128,7 @@ public class GameUIHandler : MonoBehaviour
                 ClearSelection();
                 return;
             }
-            
+
             ISelectable selectable = objectAtMouse.GetComponent<ISelectable>();
             if (selectable != null)
             {
@@ -169,7 +170,38 @@ public class GameUIHandler : MonoBehaviour
                 iconManager.RefreshIcons(selectedObjects);
             }
         }
+        if (IsOnlyTowersSelected())
+        {
+            targetPriorityUIManager.UpdateTargetingButtons(selectedObjects);
+        }
     }
+
+    private bool IsOnlyTowersSelected()
+    {
+        foreach (ISelectable selectable in selectedObjects)
+        {
+            if (selectable is not Tower)
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public void OnTowerTargetingTypeSelected(TargetingType type)
+    {
+        if (IsOnlyTowersSelected())
+        {
+            foreach (ISelectable selectable in selectedObjects)
+            {
+                if (selectable is Tower tower)
+                {
+                    tower.targetingType = type;
+                }
+            }
+        }
+    }
+    
     void ShowSelectedInformation()
     {
         //TODO: show information about selected objects
