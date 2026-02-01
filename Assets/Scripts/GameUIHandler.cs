@@ -10,6 +10,7 @@ public class GameUIHandler : MonoBehaviour
     private float placementAngle = 0f;
     private float placementAngleStep = 15f;
     private List<ISelectable> selectedObjects = new List<ISelectable>();
+    public IconManager iconManager;
     public List<GameObject> placedObjects = new List<GameObject>();
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -108,6 +109,12 @@ public class GameUIHandler : MonoBehaviour
             selectable.Deselect();
         }
         selectedObjects.Clear();
+        
+        // Update icon display
+        if (iconManager != null)
+        {
+            iconManager.RefreshIcons(selectedObjects);
+        }
     }
 
     void StartSelect()
@@ -145,12 +152,22 @@ public class GameUIHandler : MonoBehaviour
                     selectable.Select();
                     selectedObjects.Add(selectable);
                 }
+                // Update icon display
+                if (iconManager != null)
+                {
+                    iconManager.RefreshIcons(selectedObjects);
+                }
             }
         }
         else
         {
             // Clicked on empty space - clear selection
             ClearSelection();
+            // Update icon display
+            if (iconManager != null)
+            {
+                iconManager.RefreshIcons(selectedObjects);
+            }
         }
     }
     void ShowSelectedInformation()

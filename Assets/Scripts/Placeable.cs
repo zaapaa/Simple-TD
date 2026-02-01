@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using System;
 
 public class Placeable : MonoBehaviour, ISelectable
 {
@@ -19,7 +20,6 @@ public class Placeable : MonoBehaviour, ISelectable
 
     private MaterialUpdater materialUpdater;
     private GameObject selectionVisual;
-
     void Start()
     {
         materialUpdater = GetComponent<MaterialUpdater>();
@@ -47,7 +47,7 @@ public class Placeable : MonoBehaviour, ISelectable
             if (obstructingPlaceable != null)
             {
                 validPosition = AdjustPlacementOnObstruction(mousePosition);
-                Debug.Log($"Valid position after adjustment: {validPosition}");
+                // Debug.Log($"Valid position after adjustment: {validPosition}");
             }
             if (firstPlacementCheck)
             {
@@ -180,7 +180,7 @@ public class Placeable : MonoBehaviour, ISelectable
         isSelected = true;
         selectionVisual.SetActive(true);
     }
-    
+
     public void Deselect()
     {
         isSelected = false;
@@ -190,5 +190,10 @@ public class Placeable : MonoBehaviour, ISelectable
     public bool IsSelected()
     {
         return isSelected;
+    }
+
+    public Type GetSelectableType()
+    {
+        return typeof(Placeable);
     }
 }
