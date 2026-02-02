@@ -7,4 +7,5 @@ public interface ISelectable
     void Deselect();
     bool IsSelected();
     Type GetSelectableType();
+    SelectInfo GetSelectInfo();
 }

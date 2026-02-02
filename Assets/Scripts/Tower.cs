@@ -4,12 +4,23 @@ using System.Linq;
 
 public class Tower : Placeable, ISelectable
 {
-    public TargetingType targetingType;
     public float targetingRange;
     public float attackCooldown;
     public GameObject projectilePrefab;
     public Transform firePoint;
     public float lastAttackTime;
+    public TargetingType targetingType = TargetingType.Nearest;
+    public float damageDone;
+    public int killCount;
+    private GameObject targetingRangeVisual;
+
+    protected override void Start()
+    {
+        base.Start();
+        targetingRangeVisual = transform.Find("TargetingRange")?.gameObject;
+        SetTargetingRangeVisualScale();
+        targetingRangeVisual.SetActive(true);
+    }
 
     protected override void Update()
     {
@@ -54,11 +65,52 @@ public class Tower : Placeable, ISelectable
         {
             GameObject projectile = Instantiate(projectilePrefab, firePoint.position, firePoint.rotation);
         }
+        // TODO: add attacking logic stuff
+    }
+
+    private void SetTargetingRangeVisualScale()
+    {
+        float ratio = 0.128f;
+        targetingRangeVisual.transform.localScale = new Vector3(targetingRange * ratio, targetingRange * ratio, 1f);
+    }
+
+    public override bool Place()
+    {
+        bool placed = base.Place();
+        if (placed)
+        {
+            targetingRangeVisual.SetActive(false);
+        }
+        return placed;
+    }
+
+    public override void Select()
+    {
+        base.Select();
+        targetingRangeVisual.SetActive(true);
+    }
+    
+    public override void Deselect()
+    {
+        base.Deselect();
+        targetingRangeVisual.SetActive(false);
     }
 
     public override Type GetSelectableType()
     {
         return typeof(Tower);
+    }
+    
+    public override SelectInfo GetSelectInfo()
+    {
+        SelectInfo selectInfo = new SelectInfo();
+        selectInfo.name = nameof(Tower);
+        selectInfo.damage = projectilePrefab.GetComponent<Projectile>().damage;
+        selectInfo.attackRange = targetingRange;
+        selectInfo.damageDone = damageDone;
+        selectInfo.killCount = killCount;
+
+        return selectInfo;
     }
 }
 

@@ -14,16 +14,6 @@ public class TargetPriorityUIManager : MonoBehaviour
     public Color selectedButtonColor = Color.green;
     public Color defaultButtonColor = Color.white;
 
-    void Start()
-    {
-        
-    }
-
-    void Update()
-    {
-        
-    }
-
     public void UpdateTargetingButtons(List<ISelectable> selectedObjects)
     {
         TargetingType targetingType = TargetingType.None;
@@ -41,6 +31,10 @@ public class TargetPriorityUIManager : MonoBehaviour
                     break;
                 }
             }
+            else
+            {
+                break;
+            }
         }
         SetTargetingButtons(targetingType);
     }
@@ -50,40 +44,29 @@ public class TargetPriorityUIManager : MonoBehaviour
         {
             button.image.color = defaultButtonColor;
         }
-        
-        switch (targetingType)
+
+        for (int i = 0; i < buttons.Count; i++)
         {
-            case TargetingType.Nearest:
-                buttons[0].image.color = selectedButtonColor;
-                break;
-            case TargetingType.Farthest:
-                buttons[1].image.color = selectedButtonColor;
-                break;
-            case TargetingType.Weakest:
-                buttons[2].image.color = selectedButtonColor;
-                break;
-            case TargetingType.Strongest:
-                buttons[3].image.color = selectedButtonColor;
-                break;
-            case TargetingType.First:
-                buttons[4].image.color = selectedButtonColor;
-                break;
-            case TargetingType.Last:
-                buttons[5].image.color = selectedButtonColor;
-                break;
+            if (buttons[i].GetComponent<TargetingButton>().targetingType == targetingType)
+            {
+                buttons[i].image.color = selectedButtonColor;
+            }
         }
+        
+        gameObject.SetActive(targetingType != TargetingType.None);
     }
-    
+
     public void Clicked(TargetingType type)
     {
         onTargetingTypeSelected?.Invoke(type);
+        SetTargetingButtons(type);
     }
     
     // Helper methods for button onClick (these will appear in Inspector)
     public void SetTargetingNearest() => Clicked(TargetingType.Nearest);
     public void SetTargetingFarthest() => Clicked(TargetingType.Farthest);
-    public void SetTargetingWeakest() => Clicked(TargetingType.Weakest);
     public void SetTargetingStrongest() => Clicked(TargetingType.Strongest);
+    public void SetTargetingWeakest() => Clicked(TargetingType.Weakest);
     public void SetTargetingFirst() => Clicked(TargetingType.First);
     public void SetTargetingLast() => Clicked(TargetingType.Last);
 }

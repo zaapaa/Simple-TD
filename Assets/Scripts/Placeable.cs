@@ -4,13 +4,14 @@ using System;
 
 public class Placeable : MonoBehaviour, ISelectable
 {
+    public string description;
+    public Sprite UIIcon;
     public float placementCost;
     public float placementRadius = 2.5f;
     public bool isBeingPlaced = true;
     public Color validPlacementColor = Color.green;
     public Color invalidPlacementColor = Color.red;
     public Color obstructPlacementColor = Color.yellow;
-    public Sprite UIIcon;
 
     private float yOffsetWhenPlacing = 0.01f;
     private bool previousValidPosition;
@@ -20,7 +21,7 @@ public class Placeable : MonoBehaviour, ISelectable
 
     private MaterialUpdater materialUpdater;
     private GameObject selectionVisual;
-    void Start()
+    protected virtual void Start()
     {
         materialUpdater = GetComponent<MaterialUpdater>();
         selectionVisual = transform.Find("Selection")?.gameObject;
@@ -94,19 +95,19 @@ public class Placeable : MonoBehaviour, ISelectable
     private bool CheckClearance(Vector3 position, bool excludeObstructing = false)
     {
         Collider[] allColliders = Physics.OverlapSphere(position, placementRadius * 2);
-        
+
         for (int i = 0; i < allColliders.Length; i++)
         {
             if (allColliders[i].gameObject == gameObject)
             {
                 continue;
             }
-            
+
             if (excludeObstructing && allColliders[i].gameObject == obstructingPlaceable)
             {
                 continue;
             }
-            
+
             // Handle different object types with appropriate collision detection
             if (allColliders[i].CompareTag("Placeable"))
             {
@@ -114,7 +115,7 @@ public class Placeable : MonoBehaviour, ISelectable
                 float distance = Vector3.Distance(position, allColliders[i].transform.position);
                 var otherPlaceable = allColliders[i].GetComponent<Placeable>();
                 float combinedRadius = placementRadius + (otherPlaceable?.placementRadius ?? placementRadius);
-                
+
                 if (distance < combinedRadius)
                 {
                     if (excludeObstructing)
@@ -154,23 +155,23 @@ public class Placeable : MonoBehaviour, ISelectable
                 }
             }
         }
-        
+
         if (!excludeObstructing && obstructingPlaceable != null)
         {
             obstructingPlaceable = null;
         }
         return true;
     }
-    
+
     private bool IsCollidingWithWall(Vector3 position, Collider wallCollider)
     {
         // Use the wall's actual collider bounds for accurate detection
         Bounds wallBounds = wallCollider.bounds;
-        
+
         // Create a bounds for the placeable at the given position
         Vector3 placeableSize = Vector3.one * (placementRadius * 2);
         Bounds placeableBounds = new Bounds(position, placeableSize);
-        
+
         // Check if the bounds intersect
         return wallBounds.Intersects(placeableBounds);
     }
@@ -188,7 +189,7 @@ public class Placeable : MonoBehaviour, ISelectable
         // If direction is zero, use a default direction
         if (direction == Vector3.zero)
         {
-            direction = Vector3.forward;
+            return false;
         }
 
         // Calculate the distance needed to place next to the obstruction
@@ -206,7 +207,7 @@ public class Placeable : MonoBehaviour, ISelectable
         return false;
     }
 
-    public bool Place()
+    public virtual bool Place()
     {
         if (previousValidPosition)
         {
@@ -218,13 +219,13 @@ public class Placeable : MonoBehaviour, ISelectable
         return false;
     }
 
-    public void Select()
+    public virtual void Select()
     {
         isSelected = true;
         selectionVisual.SetActive(true);
     }
 
-    public void Deselect()
+    public virtual void Deselect()
     {
         isSelected = false;
         selectionVisual.SetActive(false);
@@ -238,5 +239,11 @@ public class Placeable : MonoBehaviour, ISelectable
     public virtual Type GetSelectableType()
     {
         return typeof(Placeable);
+    }
+    public virtual SelectInfo GetSelectInfo()
+    {
+        SelectInfo selectInfo = new SelectInfo();
+        selectInfo.name = nameof(Placeable);
+        return selectInfo;
     }
 }

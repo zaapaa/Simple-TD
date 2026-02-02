@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.UI;
 using TMPro;
 using System;
 
@@ -13,14 +14,25 @@ public class IconHandler : MonoBehaviour
         {
             countText = transform.Find("Count Text").gameObject;
         }
-        UpdateCountDisplay();
-        Hide();
     }
 
     public void SetCount(int newCount)
     {
         count = newCount;
         UpdateCountDisplay();
+    }
+
+    public void SetIcon(Sprite newIcon)
+    {
+        GameObject iconObject = transform.Find("Icon")?.gameObject;
+        if (iconObject != null)
+        {
+            Image iconImage = iconObject.GetComponent<Image>();
+            if (iconImage != null)
+            {
+                iconImage.sprite = newIcon;
+            }
+        }
     }
 
     private void UpdateCountDisplay()

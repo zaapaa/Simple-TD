@@ -7,4 +7,10 @@ public class Wall : Placeable
     {
         return typeof(Wall);
     }
+    public override SelectInfo GetSelectInfo()
+    {
+        SelectInfo selectInfo = new SelectInfo();
+        selectInfo.name = nameof(Wall);
+        return selectInfo;
+    }
 }

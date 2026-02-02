@@ -16,7 +16,6 @@ public class IconManager : MonoBehaviour
     void Start()
     {
         gridLayout = GetComponent<GridLayoutGroup>();
-        RefreshIcons(new List<ISelectable>());
     }
 
     public void RefreshIcons(List<ISelectable> selectedObjects)
@@ -31,8 +30,9 @@ public class IconManager : MonoBehaviour
 
         int iconCount = 0;
 
-        // Count selected objects by type
+        // Count selected objects by type and get their sprites
         Dictionary<Type, int> typeCounts = new Dictionary<Type, int>();
+        Dictionary<Type, Sprite> typeSprites = new Dictionary<Type, Sprite>();
         foreach (var selectedObject in selectedObjects)
         {
             Type type = selectedObject.GetSelectableType();
@@ -40,6 +40,17 @@ public class IconManager : MonoBehaviour
             if (!typeCounts.ContainsKey(type))
             {
                 typeCounts[type] = 1;
+                
+                // Get sprite based on selectable type
+                if (selectedObject is Placeable placeable)
+                {
+                    typeSprites[type] = placeable.UIIcon;
+                }
+                else if (selectedObject is Enemy enemy)
+                {
+                    // TODO: Get enemy icon from enemy component or use default
+                    // For now, we'll need to add UIIcon to Enemy class
+                }
             }
             else
             {
@@ -51,7 +62,7 @@ public class IconManager : MonoBehaviour
         var sortedTypeCounts = new List<KeyValuePair<Type, int>>(typeCounts);
         sortedTypeCounts.Sort((x, y) => y.Value.CompareTo(x.Value));
 
-        // Set selectable types for icon handlers with no duplicates
+        // Set selectable types and sprites for icon handlers with no duplicates
         List<Type> assignedTypes = new List<Type>();
         foreach (var iconHandler in iconHandlers)
         {
@@ -63,6 +74,13 @@ public class IconManager : MonoBehaviour
                     if (!assignedTypes.Contains(kvp.Key))
                     {
                         iconHandler.SetType(kvp.Key);
+                        
+                        // Set the sprite if available
+                        if (typeSprites.ContainsKey(kvp.Key))
+                        {
+                            iconHandler.SetIcon(typeSprites[kvp.Key]);
+                        }
+                        
                         assignedTypes.Add(kvp.Key);
                         break;
                     }
