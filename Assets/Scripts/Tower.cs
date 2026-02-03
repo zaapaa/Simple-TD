@@ -12,6 +12,7 @@ public class Tower : Placeable, ISelectable
     public TargetingType targetingType = TargetingType.Nearest;
     public float damageDone;
     public int killCount;
+    public TowerType towerType;
     private GameObject targetingRangeVisual;
 
     protected override void Start()
@@ -64,8 +65,14 @@ public class Tower : Placeable, ISelectable
         if (projectilePrefab != null && firePoint != null)
         {
             GameObject projectile = Instantiate(projectilePrefab, firePoint.position, firePoint.rotation);
+            projectile.GetComponent<Projectile>().target = target.transform;
+            projectile.GetComponent<Projectile>().owner = this;
         }
         // TODO: add attacking logic stuff
+    }
+    public void DamageDone(float damage)
+    {
+        damageDone += damage;
     }
 
     private void SetTargetingRangeVisualScale()
@@ -98,13 +105,25 @@ public class Tower : Placeable, ISelectable
 
     public override Type GetSelectableType()
     {
-        return typeof(Tower);
+        return towerType switch
+        {
+            TowerType.Basic => typeof(BasicTowerType),
+            TowerType.Missile => typeof(MissileTowerType),
+            TowerType.Laser => typeof(LaserTowerType),
+            _ => typeof(Tower)
+        };
     }
     
     public override SelectInfo GetSelectInfo()
     {
         SelectInfo selectInfo = new SelectInfo();
-        selectInfo.name = nameof(Tower);
+        selectInfo.name = towerType switch
+        {
+            TowerType.Basic => "Basic Tower",
+            TowerType.Missile => "Missile Tower", 
+            TowerType.Laser => "Laser Tower",
+            _ => "Tower"
+        };
         selectInfo.damage = projectilePrefab.GetComponent<Projectile>().damage;
         selectInfo.attackRange = targetingRange;
         selectInfo.damageDone = damageDone;
@@ -124,4 +143,16 @@ public enum TargetingType
     Last,
     None
 }
+
+public enum TowerType
+{
+    Basic,
+    Missile,
+    Laser
+}
+
+// Marker types for tower identification
+public class BasicTowerType {}
+public class MissileTowerType {}
+public class LaserTowerType {}
 

@@ -12,8 +12,9 @@ GameObject:
   - component: {fileID: 7984499822912998003}
   - component: {fileID: 8739678490689259542}
   - component: {fileID: 5463080374782458940}
+  - component: {fileID: 6453588085105820787}
   - component: {fileID: -4924734489112336544}
-  - component: {fileID: 8170940414262089579}
+  - component: {fileID: 2342756293269142910}
   m_Layer: 0
   m_Name: Placeable Tower Basic
   m_TagString: Placeable
@@ -120,6 +121,35 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &6453588085105820787
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 603867972977027219}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 85259428319689247a18eeb38d84ccb1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Tower
+  description: Shoots enemies
+  UIIcon: {fileID: 21300000, guid: 714c2741b4c71a241aea304a34a50792, type: 3}
+  placementCost: 100
+  placementRadius: 1.3
+  isBeingPlaced: 1
+  validPlacementColor: {r: 0, g: 1, b: 0, a: 1}
+  invalidPlacementColor: {r: 1, g: 0, b: 0, a: 1}
+  obstructPlacementColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
+  targetingRange: 10
+  attackCooldown: 1
+  projectilePrefab: {fileID: 3526158911752155115, guid: f683af320cf1b3c4ba63fad17c2fadd1, type: 3}
+  firePoint: {fileID: 5196352616581713806}
+  lastAttackTime: 0
+  targetingType: 0
+  damageDone: 0
+  killCount: 0
+  towerType: 0
 --- !u!114 &-4924734489112336544
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -168,34 +198,22 @@ MonoBehaviour:
     m_RotationOrder: 4
   testColor: {r: 0, g: 0, b: 0, a: 0}
   flashingPeriod: 1
---- !u!114 &8170940414262089579
-MonoBehaviour:
+--- !u!208 &2342756293269142910
+NavMeshObstacle:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 603867972977027219}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 86f9c40f8f1d4aa42880e1bdfe799b2f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::TowerBasic
-  description: "Shoots basic projectiles pr\xF6\xF6t"
-  UIIcon: {fileID: 21300000, guid: 714c2741b4c71a241aea304a34a50792, type: 3}
-  placementCost: 100
-  placementRadius: 1.3
-  isBeingPlaced: 1
-  validPlacementColor: {r: 0, g: 1, b: 0, a: 1}
-  invalidPlacementColor: {r: 1, g: 0, b: 0, a: 1}
-  obstructPlacementColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
-  targetingRange: 10
-  attackCooldown: 0
-  projectilePrefab: {fileID: 3526158911752155115, guid: f683af320cf1b3c4ba63fad17c2fadd1, type: 3}
-  firePoint: {fileID: 5196352616581713806}
-  lastAttackTime: 0
-  targetingType: 0
-  damageDone: 100
-  killCount: 10
+  m_Enabled: 0
+  serializedVersion: 3
+  m_Shape: 1
+  m_Extents: {x: 0.5, y: 0.5, z: 0.5}
+  m_MoveThreshold: 0.1
+  m_Carve: 1
+  m_CarveOnlyStationary: 1
+  m_Center: {x: 0, y: 0, z: 0}
+  m_TimeToStationary: 0.5
 --- !u!1 &1846118470216746396
 GameObject:
   m_ObjectHideFlags: 0

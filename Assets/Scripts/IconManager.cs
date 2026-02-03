@@ -48,8 +48,7 @@ public class IconManager : MonoBehaviour
                 }
                 else if (selectedObject is Enemy enemy)
                 {
-                    // TODO: Get enemy icon from enemy component or use default
-                    // For now, we'll need to add UIIcon to Enemy class
+                    typeSprites[type] = enemy.UIIcon;
                 }
             }
             else

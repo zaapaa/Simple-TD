@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 using System;
+using UnityEngine.AI;
 
 public class Placeable : MonoBehaviour, ISelectable
 {
@@ -48,7 +49,7 @@ public class Placeable : MonoBehaviour, ISelectable
             if (obstructingPlaceable != null)
             {
                 validPosition = AdjustPlacementOnObstruction(mousePosition);
-                Debug.Log($"Valid position after adjustment: {validPosition}");
+                // Debug.Log($"Valid position after adjustment: {validPosition}");
             }
             if (firstPlacementCheck)
             {
@@ -214,6 +215,10 @@ public class Placeable : MonoBehaviour, ISelectable
             isBeingPlaced = false;
             materialUpdater.StopFlash();
             transform.position = new Vector3(transform.position.x, 0f, transform.position.z);
+        
+        NavMeshObstacle navObstacle = GetComponent<NavMeshObstacle>();
+        navObstacle.enabled = true;
+
             return true;
         }
         return false;

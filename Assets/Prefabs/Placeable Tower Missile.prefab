@@ -760,8 +760,9 @@ GameObject:
   - component: {fileID: 4709982112832513774}
   - component: {fileID: 7535415433725342565}
   - component: {fileID: 754920158831112277}
+  - component: {fileID: 4661367538425246669}
   - component: {fileID: 2927991765559748151}
-  - component: {fileID: -6529080861896451723}
+  - component: {fileID: -4813103651568268848}
   m_Layer: 0
   m_Name: Placeable Tower Missile
   m_TagString: Placeable
@@ -868,6 +869,35 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &4661367538425246669
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8184965404363963256}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 85259428319689247a18eeb38d84ccb1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Tower
+  description: boom boom missile homing aoe damage yey
+  UIIcon: {fileID: 21300000, guid: e9d3ce18a6be1304fb763a537c353f6d, type: 3}
+  placementCost: 250
+  placementRadius: 1.3
+  isBeingPlaced: 1
+  validPlacementColor: {r: 0, g: 1, b: 0, a: 1}
+  invalidPlacementColor: {r: 1, g: 0, b: 0, a: 1}
+  obstructPlacementColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
+  targetingRange: 15
+  attackCooldown: 3
+  projectilePrefab: {fileID: 3526158911752155115, guid: f683af320cf1b3c4ba63fad17c2fadd1, type: 3}
+  firePoint: {fileID: 2771992136723759927}
+  lastAttackTime: 0
+  targetingType: 0
+  damageDone: 0
+  killCount: 0
+  towerType: 1
 --- !u!114 &2927991765559748151
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -916,34 +946,22 @@ MonoBehaviour:
     m_RotationOrder: 4
   testColor: {r: 0, g: 0, b: 0, a: 0}
   flashingPeriod: 1
---- !u!114 &-6529080861896451723
-MonoBehaviour:
+--- !u!208 &-4813103651568268848
+NavMeshObstacle:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8184965404363963256}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 52ab4ddead142e14d80e6d7a8b4755f2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::TowerMissile
-  description: Shoots homing missiles!! WTF!!
-  UIIcon: {fileID: 21300000, guid: e9d3ce18a6be1304fb763a537c353f6d, type: 3}
-  placementCost: 250
-  placementRadius: 1.3
-  isBeingPlaced: 1
-  validPlacementColor: {r: 0, g: 1, b: 0, a: 1}
-  invalidPlacementColor: {r: 1, g: 0, b: 0, a: 1}
-  obstructPlacementColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
-  targetingRange: 15
-  attackCooldown: 0
-  projectilePrefab: {fileID: 3526158911752155115, guid: f683af320cf1b3c4ba63fad17c2fadd1, type: 3}
-  firePoint: {fileID: 2771992136723759927}
-  lastAttackTime: 0
-  targetingType: 0
-  damageDone: 0
-  killCount: 0
+  m_Enabled: 0
+  serializedVersion: 3
+  m_Shape: 1
+  m_Extents: {x: 0.5, y: 0.5, z: 0.5}
+  m_MoveThreshold: 0.1
+  m_Carve: 1
+  m_CarveOnlyStationary: 1
+  m_Center: {x: 0, y: 0, z: 0}
+  m_TimeToStationary: 0.5
 --- !u!1 &8253901346943012219
 GameObject:
   m_ObjectHideFlags: 0

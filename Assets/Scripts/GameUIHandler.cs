@@ -2,6 +2,7 @@ using UnityEngine;
 using System.Collections.Generic;
 using UnityEngine.InputSystem;
 using TMPro;
+using UnityEngine.AI;
 
 public class GameUIHandler : MonoBehaviour
 {
@@ -20,6 +21,7 @@ public class GameUIHandler : MonoBehaviour
     public GameObject upgradePanel;
     public TextMeshProUGUI selectInfoText;
     private GameObject selectedBuildPlaceable = null;
+    public EnemyWaveSpawner waveSpawner = null;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -58,20 +60,8 @@ public class GameUIHandler : MonoBehaviour
             }
             else
             {
-                bool wasPlacementSuccessful = currentPlacement.GetComponent<Placeable>().Place();
-                if (wasPlacementSuccessful)
-                {
-                    placedObjects.Add(currentPlacement);
-                    currentPlacement = null;
-                    if (Keyboard.current.shiftKey.isPressed)
-                    {
-                        StartPlacement();
-                    }
-                    else
-                    {
-                        selectedBuildPlaceable = null;
-                    }
-                }
+                // Start path validation coroutine
+                StartCoroutine(ValidatePlacementAndPlace(currentPlacement));
             }
         }
 
@@ -181,7 +171,7 @@ public class GameUIHandler : MonoBehaviour
                 GameObject placementObject = Instantiate(selectedBuildPlaceable, hit.point, Quaternion.Euler(0, placementAngle, 0));
                 placementObject.GetComponent<Placeable>().isBeingPlaced = true;
                 currentPlacement = placementObject;
-                Debug.Log($"Placed object {placementObject.name} at {hit.point}");
+                // Debug.Log($"Placed object {placementObject.name} at {hit.point}");
             }
         }
     }
@@ -299,5 +289,78 @@ public class GameUIHandler : MonoBehaviour
         selectInfoText.text = combinedInfo.ToString();
         selectionHeaderText.GetComponent<TMPro.TextMeshProUGUI>().text = selectedObjects.Count == 1 ? "Selection" : $"Selection ({selectedObjects.Count})";
         selectionPanel.SetActive(true);
+    }
+    public void StartNextWaveButtonPressed()
+    {
+        if (waveSpawner != null)
+        {
+            waveSpawner.StartNextWave();
+        }
+    }
+    System.Collections.IEnumerator ValidatePlacementAndPlace(GameObject placementObject)
+    {
+        // Get spawn and end points from EnemyWaveSpawner
+        if (waveSpawner == null || waveSpawner.spawnPoint == null || waveSpawner.endpoint == null)
+        {
+            // Allow placement if spawner not set up yet
+            CompletePlacement(placementObject);
+            yield break;
+        }
+        
+        // Get existing NavMeshObstacle component
+        NavMeshObstacle navObstacle = placementObject.GetComponent<NavMeshObstacle>();
+        if (navObstacle == null)
+        {
+            // No NavMeshObstacle, allow placement
+            CompletePlacement(placementObject);
+            yield break;
+        }
+        
+        // Store original enabled state
+        bool wasEnabled = navObstacle.enabled;
+        
+        // Temporarily enable the obstacle for path validation
+        navObstacle.enabled = true;
+        
+        // Wait a frame for NavMesh to update
+        yield return null;
+        
+        // Calculate path with obstacle present
+        NavMeshPath path = new NavMeshPath();
+        bool pathExists = NavMesh.CalculatePath(waveSpawner.spawnPoint.position, waveSpawner.endpoint.position, NavMesh.AllAreas, path);
+        
+        // Restore original state
+        navObstacle.enabled = wasEnabled;
+        
+        // Wait another frame for NavMesh to restore
+        yield return null;
+        
+        // Complete placement only if path is still valid
+        if (pathExists && path.status == NavMeshPathStatus.PathComplete)
+        {
+            CompletePlacement(placementObject);
+        }
+        else
+        {
+            Debug.Log("Placement blocked: would obstruct enemy path");
+        }
+    }
+    
+    void CompletePlacement(GameObject placementObject)
+    {
+        bool wasPlacementSuccessful = placementObject.GetComponent<Placeable>().Place();
+        if (wasPlacementSuccessful)
+        {
+            placedObjects.Add(placementObject);
+            currentPlacement = null;
+            if (Keyboard.current.shiftKey.isPressed)
+            {
+                StartPlacement();
+            }
+            else
+            {
+                selectedBuildPlaceable = null;
+            }
+        }
     }
 }
