@@ -52,6 +52,12 @@ public class Enemy : MonoBehaviour, ISelectable
         healthBarImage = GetComponentInChildren<Image>();
         agent.SetDestination(endPoint.position);
         agent.updateRotation = false;
+        
+        if (UnityEngine.Random.value < 0.5f)
+        {
+            rotationSpeed *= -1f;
+        }
+
     }
 
     // Update is called once per frame
@@ -108,6 +114,7 @@ public class Enemy : MonoBehaviour, ISelectable
     {
         // Damage player and destroy enemy
         GameManager.instance.DecreaseLives(1);
+        GameUIHandler.instance.RemoveSelection(this);
         Destroy(gameObject);
     }
 
@@ -131,6 +138,8 @@ public class Enemy : MonoBehaviour, ISelectable
     {
         // Give money to player
         GameManager.instance.IncreaseMoney(reward); // Adjust reward as needed
+        Deselect();
+        GameUIHandler.instance.RemoveSelection(this);
         if (enemyType == EnemyType.Big)
         {
             waveSpawner.SpawnEnemy(waveSpawner.enemyPrefabs[0], transform.position);

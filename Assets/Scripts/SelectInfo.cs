@@ -38,7 +38,7 @@ public class SelectInfo
             infoText += multi ? $"Max Health: {maxHealth:F0}\n" : $"Max Health: {maxHealth:F0}\n";
             infoText += multi ? $"Health: {health:F0} ({health / maxHealth * 100:F0}%) \n" : $"Health: {health:F0} ({health / maxHealth * 100:F0}%) \n";
             infoText += multi ? $"Avg Speed: {speed:F0}\n" : $"Speed: {speed:F0}\n";
-            infoText += multi ? $"Avg Progress: {progress:F0}\n" : $"Progress: {progress:F0}\n";
+            infoText += multi ? $"Avg Progress: {progress*100:F0}%\n" : $"Progress: {progress*100:F0}%\n";
             infoText += multi ? $"Reward: {reward:F0}\n" : $"Reward: {reward:F0}\n";
         }
         return infoText;

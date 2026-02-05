@@ -2,16 +2,18 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
-public class BuildPanelButton : MonoBehaviour
+public class UpgradePanelButton : BuildPanelButton
 {
-    public GameObject linkedPrefab;
+    public Wall wall;
 
-    protected virtual void Update()
+    protected override void Update()
     {
         Placeable placeable = linkedPrefab.GetComponent<Placeable>();
         TextMeshProUGUI priceText = transform.Find("Price Text").GetComponent<TextMeshProUGUI>();
         Button button = GetComponent<Button>();
-        if (GameManager.instance.HasEnoughMoney(placeable.placementCost))
+        float cost = placeable.placementCost - wall.placementCost;
+        priceText.text = cost.ToString("F0");
+        if (GameManager.instance.HasEnoughMoney(cost))
         {
             priceText.color = Color.green;
             button.interactable = true;
@@ -22,9 +24,9 @@ public class BuildPanelButton : MonoBehaviour
             button.interactable = false;
         }
     }
-    public virtual void SetupButton(GameUIHandler gameUIHandler)
+    public override void SetupButton(GameUIHandler gameUIHandler)
     {
         Button button = GetComponent<Button>();
-        button.onClick.AddListener(() => gameUIHandler.SelectBuildPlaceable(linkedPrefab));
+        button.onClick.AddListener(() => gameUIHandler.UpgradeWall(linkedPrefab));
     }
 }

@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine.InputSystem;
 using TMPro;
 using UnityEngine.AI;
+using System.Linq;
+using UnityEngine.EventSystems;
 
 public class GameUIHandler : MonoBehaviour
 {
@@ -22,13 +24,20 @@ public class GameUIHandler : MonoBehaviour
     public TextMeshProUGUI selectInfoText;
     private GameObject selectedBuildPlaceable = null;
     public EnemyWaveSpawner waveSpawner = null;
+    public static GameUIHandler instance = null;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        instance = this;
         selectInfoText.text = "";
         selectionPanel.SetActive(false);
         buildPanel.SetActive(false);
         upgradePanel.SetActive(false);
+    }
+
+    bool IsMouseOverUI()
+    {
+        return EventSystem.current.IsPointerOverGameObject();
     }
 
     // Update is called once per frame
@@ -49,14 +58,18 @@ public class GameUIHandler : MonoBehaviour
             }
             // TODO: if tower(s) selected and enemy right clicked, override towers' target to that enemy. then return to prevent build panel
             ClearSelection();
-            ShowBuildPanel();
+            ShowPanel(buildPanel, placeablePrefabs);
         }
         if (Mouse.current.leftButton.wasPressedThisFrame)
         {
-            HideBuildPanel();
+            HidePanel(buildPanel);
             if (currentPlacement == null)
             {
-                StartSelect();
+                // Don't clear selection if clicking on UI
+                if (!IsMouseOverUI())
+                {
+                    StartSelect();
+                }
             }
             else
             {
@@ -91,18 +104,22 @@ public class GameUIHandler : MonoBehaviour
                     selectable.Select();
                 }
             }
-            ShowSelectedInformation();
+            if (IsOnlyWallsSelected())
+            {
+                ShowPanel(upgradePanel, GetUpgradePrefabs());
+            }
         }
 
+        ShowSelectedInformation();
     }
 
-    void ShowBuildPanel()
+    void ShowPanel(GameObject panel, List<GameObject> prefabs)
     {
-        buildPanel.GetComponent<BuildPanel>().PopulatePanel(placeablePrefabs);
-        buildPanel.SetActive(true);
+        panel.GetComponent<BuildPanel>().PopulatePanel(prefabs);
+        panel.SetActive(true);
         Vector2 mousePosition = Mouse.current.position.ReadValue();
-        RectTransform panelRect = buildPanel.GetComponent<RectTransform>();
-        RectTransform canvasRect = buildPanel.GetComponentInParent<Canvas>().GetComponent<RectTransform>();
+        RectTransform panelRect = panel.GetComponent<RectTransform>();
+        RectTransform canvasRect = panel.GetComponentInParent<Canvas>().GetComponent<RectTransform>();
         Vector2 panelSize = panelRect.sizeDelta;
 
         // Convert mouse position to local canvas coordinates
@@ -145,18 +162,41 @@ public class GameUIHandler : MonoBehaviour
     public void SelectBuildPlaceable(GameObject gameObject)
     {
         selectedBuildPlaceable = gameObject;
-        HideBuildPanel();
+        HidePanel(buildPanel);
     }
 
-    void HideBuildPanel()
+    void HidePanel(GameObject panel)
     {
-        StartCoroutine(HideBuildPanelDelayed());
+        StartCoroutine(HidePanelDelayed(panel));
     }
 
-    System.Collections.IEnumerator HideBuildPanelDelayed()
+    System.Collections.IEnumerator HidePanelDelayed(GameObject panel)
     {
-        yield return new WaitForSeconds(0.1f*Time.timeScale); // Wait 0.1 seconds
-        buildPanel.SetActive(false);
+        yield return new WaitForSeconds(0.1f * Time.timeScale); // Wait 0.1 seconds
+        panel.SetActive(false);
+    }
+
+    public void UpgradeWall(GameObject upgradePrefab)
+    {
+        Debug.Log("Upgrading wall with prefab: " + upgradePrefab.name + ", selected objects: " + string.Join(", ", selectedObjects.Select(x => (x as Placeable).name)));
+
+        if (IsOnlyWallsSelected())
+        {
+            List<ISelectable> itemsToRemove = new List<ISelectable>();
+            foreach (var selectedObject in selectedObjects)
+            {
+                float cost = upgradePrefab.GetComponent<Placeable>().placementCost - (selectedObject as Wall).placementCost;
+                if (!GameManager.instance.HasEnoughMoney(cost)) break;
+                selectedObject.Deselect();
+                itemsToRemove.Add(selectedObject);
+                (selectedObject as Wall).Upgrade(upgradePrefab);
+            }
+            foreach (var item in itemsToRemove)
+            {
+                selectedObjects.Remove(item);
+            }
+        }
+        HidePanel(upgradePanel);
     }
 
     void StartPlacement()
@@ -233,14 +273,24 @@ public class GameUIHandler : MonoBehaviour
                     selectable.Select();
                     selectedObjects.Add(selectable);
                 }
+                if (IsOnlyWallsSelected())
+                {
+                    ShowPanel(upgradePanel, GetUpgradePrefabs());
+                }
             }
         }
         else
         {
+            HidePanel(upgradePanel);
             // Clicked on empty space - clear selection
             ClearSelection();
         }
         ShowSelectedInformation();
+    }
+
+    List<GameObject> GetUpgradePrefabs()
+    {
+        return placeablePrefabs.Where(x => x.GetComponent<Wall>() == null).ToList();
     }
 
     private bool IsOnlyTowersSelected()
@@ -248,6 +298,17 @@ public class GameUIHandler : MonoBehaviour
         foreach (ISelectable selectable in selectedObjects)
         {
             if (selectable is not Tower)
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+    private bool IsOnlyWallsSelected()
+    {
+        foreach (ISelectable selectable in selectedObjects)
+        {
+            if (selectable is not Wall)
             {
                 return false;
             }
@@ -271,12 +332,13 @@ public class GameUIHandler : MonoBehaviour
 
     void ShowSelectedInformation()
     {
+        selectedObjects.RemoveAll(x => x == null);
         if (selectedObjects.Count == 0)
         {
             selectionPanel.SetActive(false);
             return;
         }
-        
+
         iconManager?.RefreshIcons(selectedObjects);
         targetPriorityUIManager.UpdateTargetingButtons(selectedObjects);
 
@@ -289,6 +351,12 @@ public class GameUIHandler : MonoBehaviour
         selectInfoText.text = combinedInfo.ToString();
         selectionHeaderText.GetComponent<TMPro.TextMeshProUGUI>().text = selectedObjects.Count == 1 ? "Selection" : $"Selection ({selectedObjects.Count})";
         selectionPanel.SetActive(true);
+    }
+    public void RemoveSelection(ISelectable selectable)
+    {
+        selectable.Deselect();
+        selectedObjects.Remove(selectable);
+        ShowSelectedInformation();
     }
     public void StartNextWaveButtonPressed()
     {
@@ -306,7 +374,7 @@ public class GameUIHandler : MonoBehaviour
             CompletePlacement(placementObject);
             yield break;
         }
-        
+
         // Get existing NavMeshObstacle component
         NavMeshObstacle navObstacle = placementObject.GetComponent<NavMeshObstacle>();
         if (navObstacle == null)
@@ -315,26 +383,26 @@ public class GameUIHandler : MonoBehaviour
             CompletePlacement(placementObject);
             yield break;
         }
-        
+
         // Store original enabled state
         bool wasEnabled = navObstacle.enabled;
-        
+
         // Temporarily enable the obstacle for path validation
         navObstacle.enabled = true;
-        
+
         // Wait a frame for NavMesh to update
         yield return null;
-        
+
         // Calculate path with obstacle present
         NavMeshPath path = new NavMeshPath();
         bool pathExists = NavMesh.CalculatePath(waveSpawner.spawnPoint.position, waveSpawner.endpoint.position, NavMesh.AllAreas, path);
-        
+
         // Restore original state
         navObstacle.enabled = wasEnabled;
-        
+
         // Wait another frame for NavMesh to restore
         yield return null;
-        
+
         // Complete placement only if path is still valid
         if (pathExists && path.status == NavMeshPathStatus.PathComplete)
         {
@@ -345,10 +413,10 @@ public class GameUIHandler : MonoBehaviour
             Debug.Log("Placement blocked: would obstruct enemy path");
         }
     }
-    
+
     void CompletePlacement(GameObject placementObject)
     {
-        if(!GameManager.instance.HasEnoughMoney(placementObject.GetComponent<Placeable>().placementCost))
+        if (!GameManager.instance.HasEnoughMoney(placementObject.GetComponent<Placeable>().placementCost))
         {
             return;
         }

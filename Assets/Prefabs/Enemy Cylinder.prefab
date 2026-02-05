@@ -441,7 +441,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a71ee90859836e54ba828e06e5dcb1a0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Enemy
-  maxHealth: 400
+  maxHealth: 300
   health: 0
   progress: 0
   speed: 2
@@ -449,7 +449,7 @@ MonoBehaviour:
   reward: 20
   minSpawnWaveNumber: 5
   rotationSpeed: 200
-  UIIcon: {fileID: 0}
+  UIIcon: {fileID: 21300000, guid: 0ae95acb6d517674c94a4da1b1056fae, type: 3}
   enemyType: 2
 --- !u!65 &7896114391999139191
 BoxCollider:

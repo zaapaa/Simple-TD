@@ -13,4 +13,10 @@ public class Wall : Placeable
         selectInfo.name = nameof(Wall);
         return selectInfo;
     }
+    public void Upgrade(GameObject upgradePrefab)
+    {
+        GameObject newTower = Instantiate(upgradePrefab, transform.position, transform.rotation);
+        newTower.GetComponent<Tower>().Place(true);
+        Destroy(gameObject);
+    }
 }

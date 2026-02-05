@@ -53,7 +53,7 @@ public class ProjectileHoming : Projectile
 
     protected override bool HasNoTarget()
     {
-        if (canRedirect)
+        if (canRedirect && target == null)
         {
             var targetGameobject = owner.GetTarget();
             if (targetGameobject != null) target = targetGameobject.transform;

@@ -827,7 +827,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a71ee90859836e54ba828e06e5dcb1a0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Enemy
-  maxHealth: 300
+  maxHealth: 500
   health: 0
   progress: 0
   speed: 2
@@ -835,5 +835,5 @@ MonoBehaviour:
   reward: 100
   minSpawnWaveNumber: 10
   rotationSpeed: 300
-  UIIcon: {fileID: 0}
+  UIIcon: {fileID: 21300000, guid: fad1f4722b25eda4e8a5ddf55825bc02, type: 3}
   enemyType: 3

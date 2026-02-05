@@ -208,17 +208,15 @@ public class Placeable : MonoBehaviour, ISelectable
         return false;
     }
 
-    public virtual bool Place()
+    public virtual bool Place(bool force = false)
     {
-        if (previousValidPosition)
+        if (previousValidPosition || force)
         {
             isBeingPlaced = false;
-            materialUpdater.StopFlash();
+            materialUpdater?.StopFlash();
             transform.position = new Vector3(transform.position.x, 0f, transform.position.z);
-        
-        NavMeshObstacle navObstacle = GetComponent<NavMeshObstacle>();
-        navObstacle.enabled = true;
-
+            NavMeshObstacle navObstacle = GetComponent<NavMeshObstacle>();
+            navObstacle.enabled = true;
             return true;
         }
         return false;
@@ -233,7 +231,7 @@ public class Placeable : MonoBehaviour, ISelectable
     public virtual void Deselect()
     {
         isSelected = false;
-        selectionVisual.SetActive(false);
+        selectionVisual?.SetActive(false);
     }
 
     public bool IsSelected()

@@ -285,7 +285,7 @@ MonoBehaviour:
   reward: 15
   minSpawnWaveNumber: 3
   rotationSpeed: 0
-  UIIcon: {fileID: 0}
+  UIIcon: {fileID: 21300000, guid: c3be57eee39a2e84b8f9adeb9ec2dc89, type: 3}
   enemyType: 1
 --- !u!1 &5986848497001355090
 GameObject:
@@ -626,7 +626,7 @@ GameObject:
   - component: {fileID: 3573603061935507463}
   - component: {fileID: 553703144012051833}
   m_Layer: 7
-  m_Name: Sphere
+  m_Name: Selection
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

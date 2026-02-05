@@ -123,12 +123,12 @@ public class Tower : Placeable, ISelectable
         targetingRangeVisual.transform.localScale = new Vector3(targetingRange * ratio, targetingRange * ratio, 1f);
     }
 
-    public override bool Place()
+    public override bool Place(bool force = false)
     {
-        bool placed = base.Place();
+        bool placed = base.Place(force);
         if (placed)
         {
-            targetingRangeVisual.SetActive(false);
+            targetingRangeVisual?.SetActive(false);
         }
         return placed;
     }

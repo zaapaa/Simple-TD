@@ -14,6 +14,7 @@ public class EnemyWaveSpawner : MonoBehaviour
     public float enemyWaitIntervalInitial = 1f;
     public float enemyWaitIntervalDecrease = 0.02f;
     public float enemyWaitIntervalMin = 0.5f;
+    public float maxHealthIncreasePerWave = 1.1f;
     public List<GameObject> enemyPrefabs;
     public Transform spawnPoint;
     public Transform endpoint;
@@ -21,6 +22,7 @@ public class EnemyWaveSpawner : MonoBehaviour
     private int currentWave = 1;
     private float waveTimer;
     private float enemyWaitInterval;
+    private float maxHealthIncrease=1f;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -66,6 +68,7 @@ public class EnemyWaveSpawner : MonoBehaviour
         GameObject enemy = Instantiate(enemyPrefab, spawnPosition, enemyPrefab.transform.rotation);
         enemy.transform.parent = transform;
         enemy.GetComponent<Enemy>().Initialize(spawnPoint, endpoint, this);
+        enemy.GetComponent<Enemy>().maxHealth *= maxHealthIncrease;
     }
     Dictionary<GameObject, int> GetEnemySpawnCount()
     {
@@ -131,5 +134,6 @@ public class EnemyWaveSpawner : MonoBehaviour
         waveBudget += waveBudgetIncrease;
         enemyWaitInterval -= enemyWaitIntervalDecrease;
         enemyWaitInterval = Mathf.Max(enemyWaitInterval, enemyWaitIntervalMin);
+        maxHealthIncrease *= maxHealthIncreasePerWave;
     }
 }
