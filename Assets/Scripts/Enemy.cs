@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.UI;
 using System;
+using System.Collections.Generic;
 
 public class Enemy : MonoBehaviour, ISelectable
 {
@@ -18,7 +19,7 @@ public class Enemy : MonoBehaviour, ISelectable
     public EnemyType enemyType;
 
     private NavMeshAgent agent;
-    private Transform target;
+    private Transform endPoint;
     private Transform spawnPoint;
     private float totalPathLength;
     private EnemyWaveSpawner waveSpawner;
@@ -26,11 +27,13 @@ public class Enemy : MonoBehaviour, ISelectable
     private bool isSelected = false;
     private Image healthBarImage;
     private GameObject model;
+    private GameObject targetVisual;
+    private List<Tower> targetedBy = new List<Tower>();
 
     public void Initialize(Transform spawn, Transform end, EnemyWaveSpawner spawner)
     {
         spawnPoint = spawn;
-        target = end;
+        endPoint = end;
         waveSpawner = spawner;
         agent = GetComponent<NavMeshAgent>();
         CalculateTotalPathLength();
@@ -41,12 +44,13 @@ public class Enemy : MonoBehaviour, ISelectable
     {
         selectionVisual = transform.Find("Selection")?.gameObject;
         model = transform.Find("Model")?.gameObject;
+        targetVisual = transform.Find("Target")?.gameObject;
         health = maxHealth;
         agent.speed = speed;
 
         // Get healthbar image component
         healthBarImage = GetComponentInChildren<Image>();
-        agent.SetDestination(target.position);
+        agent.SetDestination(endPoint.position);
         agent.updateRotation = false;
     }
 
@@ -54,7 +58,7 @@ public class Enemy : MonoBehaviour, ISelectable
     void Update()
     {
         // Update progress based on remaining distance
-        if (target != null && totalPathLength > 0)
+        if (endPoint != null && totalPathLength > 0)
         {
             progress = 1f - (agent.remainingDistance / totalPathLength);
         }
@@ -65,20 +69,28 @@ public class Enemy : MonoBehaviour, ISelectable
             ReachEndpoint();
         }
         model.transform.Rotate(Vector3.up, rotationSpeed * Time.deltaTime);
+        if (targetedBy.Count > 0)
+        {
+            targetVisual.SetActive(true);
+        }
+        else
+        {
+            targetVisual.SetActive(false);
+        }
     }
 
     void CalculateTotalPathLength()
     {
-        if (spawnPoint == null || target == null) return;
+        if (spawnPoint == null || endPoint == null) return;
 
         NavMeshPath path = new NavMeshPath();
-        if (NavMesh.CalculatePath(spawnPoint.position, target.position, NavMesh.AllAreas, path) && path.status == NavMeshPathStatus.PathComplete)
+        if (NavMesh.CalculatePath(spawnPoint.position, endPoint.position, NavMesh.AllAreas, path) && path.status == NavMeshPathStatus.PathComplete)
         {
             totalPathLength = GetPathLength(path.corners);
         }
         else
         {
-            totalPathLength = Vector3.Distance(spawnPoint.position, target.position);
+            totalPathLength = Vector3.Distance(spawnPoint.position, endPoint.position);
         }
     }
 
@@ -125,6 +137,20 @@ public class Enemy : MonoBehaviour, ISelectable
             waveSpawner.SpawnEnemy(waveSpawner.enemyPrefabs[0], transform.position);
         }
         Destroy(gameObject);
+    }
+
+    public void Target(Tower tower)
+    {
+        if (targetedBy.Contains(tower))
+        {
+            return;
+        }
+        targetedBy.Add(tower);
+    }
+
+    public void Untarget(Tower tower)
+    {
+        targetedBy.Remove(tower);
     }
 
     // ISelectable implementation

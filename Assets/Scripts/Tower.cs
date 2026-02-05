@@ -17,6 +17,7 @@ public class Tower : Placeable, ISelectable
     public TowerType towerType;
     private GameObject targetingRangeVisual;
     private float attackTimer;
+    private GameObject oldTarget;
 
     protected override void Start()
     {
@@ -24,6 +25,7 @@ public class Tower : Placeable, ISelectable
         targetingRangeVisual = transform.Find("TargetingRange")?.gameObject;
         SetTargetingRangeVisualScale();
         targetingRangeVisual.SetActive(true);
+        attackTimer = attackCooldown;
     }
 
     protected override void Update()
@@ -31,15 +33,42 @@ public class Tower : Placeable, ISelectable
         base.Update();
         if (!isBeingPlaced)
         {
+            // Tower unselected -> Untarget old target if it existed
+            if (!IsSelected() && oldTarget != null)
+            {
+                oldTarget.GetComponent<Enemy>().Untarget(this);
+                oldTarget = null;
+            }
             GameObject target = GetTarget();
-            if (target == null) return;
+            if (target == null)
+            {
+                // There was a target but not anymore -> untarget old target (e.g. old target moved out of range)
+                if (oldTarget != null)
+                {
+                    oldTarget.GetComponent<Enemy>().Untarget(this);
+                }
+                return;
+            }
+            // Tower has new target -> untarget old target
+            if (IsSelected() && target != oldTarget)
+            {
+                if (oldTarget != null)
+                {
+                    oldTarget.GetComponent<Enemy>().Untarget(this);
+                }
+                target.GetComponent<Enemy>().Target(this);
+            }
             attackTimer += Time.deltaTime;
             if (attackTimer >= attackCooldown)
             {
                 Attack(target);
                 RotateBarrel(target);
                 // tower attacks only once if attackcooldown is negative (laser tower)
-                attackTimer = attackCooldown<0? float.NegativeInfinity : attackTimer - attackCooldown;
+                attackTimer = attackCooldown < 0 ? float.NegativeInfinity : attackTimer - attackCooldown;
+            }
+            if (IsSelected())
+            {
+                oldTarget = target;
             }
         }
     }
@@ -109,7 +138,7 @@ public class Tower : Placeable, ISelectable
         base.Select();
         targetingRangeVisual.SetActive(true);
     }
-    
+
     public override void Deselect()
     {
         base.Deselect();
@@ -126,14 +155,14 @@ public class Tower : Placeable, ISelectable
             _ => typeof(Tower)
         };
     }
-    
+
     public override SelectInfo GetSelectInfo()
     {
         SelectInfo selectInfo = new SelectInfo();
         selectInfo.name = towerType switch
         {
             TowerType.Basic => "Basic Tower",
-            TowerType.Missile => "Missile Tower", 
+            TowerType.Missile => "Missile Tower",
             TowerType.Laser => "Laser Tower",
             _ => "Tower"
         };
@@ -165,7 +194,7 @@ public enum TowerType
 }
 
 // Marker types for tower identification
-public class BasicTowerType {}
-public class MissileTowerType {}
-public class LaserTowerType {}
+public class BasicTowerType { }
+public class MissileTowerType { }
+public class LaserTowerType { }
 
