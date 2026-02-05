@@ -8,12 +8,15 @@ public class Tower : Placeable, ISelectable
     public float attackCooldown;
     public GameObject projectilePrefab;
     public Transform firePoint;
+    public Transform barrelPivot;
+    public bool canBarrelTilt;
     public float lastAttackTime;
     public TargetingType targetingType = TargetingType.Nearest;
     public float damageDone;
     public int killCount;
     public TowerType towerType;
     private GameObject targetingRangeVisual;
+    private float attackTimer;
 
     protected override void Start()
     {
@@ -28,19 +31,20 @@ public class Tower : Placeable, ISelectable
         base.Update();
         if (!isBeingPlaced)
         {
-            if (Time.time - lastAttackTime >= attackCooldown)
+            GameObject target = GetTarget();
+            if (target == null) return;
+            attackTimer += Time.deltaTime;
+            if (attackTimer >= attackCooldown)
             {
-                GameObject target = GetTarget();
-                if (target != null)
-                {
-                    Attack(target);
-                    lastAttackTime = Time.time;
-                }
+                Attack(target);
+                RotateBarrel(target);
+                // tower attacks only once if attackcooldown is negative (laser tower)
+                attackTimer = attackCooldown<0? float.NegativeInfinity : attackTimer - attackCooldown;
             }
         }
     }
 
-    private GameObject GetTarget()
+    public GameObject GetTarget()
     {
         var enemiesInRange = FindObjectsByType<Enemy>(FindObjectsSortMode.None)
             .Where(e => Vector3.Distance(e.transform.position, transform.position) < targetingRange)
@@ -54,8 +58,8 @@ public class Tower : Placeable, ISelectable
             TargetingType.Farthest => enemiesInRange.OrderByDescending(e => Vector3.Distance(e.transform.position, transform.position)).FirstOrDefault()?.gameObject,
             TargetingType.Weakest => enemiesInRange.OrderBy(e => e.health).FirstOrDefault()?.gameObject,
             TargetingType.Strongest => enemiesInRange.OrderByDescending(e => e.health).FirstOrDefault()?.gameObject,
-            TargetingType.First => enemiesInRange.OrderBy(e => e.progress).FirstOrDefault()?.gameObject,
-            TargetingType.Last => enemiesInRange.OrderByDescending(e => e.progress).FirstOrDefault()?.gameObject,
+            TargetingType.First => enemiesInRange.OrderByDescending(e => e.progress).FirstOrDefault()?.gameObject,
+            TargetingType.Last => enemiesInRange.OrderBy(e => e.progress).FirstOrDefault()?.gameObject,
             _ => null
         };
     }
@@ -66,9 +70,18 @@ public class Tower : Placeable, ISelectable
         {
             GameObject projectile = Instantiate(projectilePrefab, firePoint.position, firePoint.rotation);
             projectile.GetComponent<Projectile>().target = target.transform;
+            projectile.GetComponent<Projectile>().source = firePoint;
             projectile.GetComponent<Projectile>().owner = this;
         }
-        // TODO: add attacking logic stuff
+    }
+    public void RotateBarrel(GameObject target)
+    {
+        Vector3 direction = (target.transform.position - barrelPivot.position).normalized;
+        if (!canBarrelTilt)
+        {
+            direction.y = 0;
+        }
+        barrelPivot.rotation = Quaternion.LookRotation(direction);
     }
     public void DamageDone(float damage)
     {

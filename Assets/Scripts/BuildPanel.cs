@@ -10,18 +10,6 @@ public class BuildPanel : MonoBehaviour
     public float widthPerIcon = 74f;
     public List<GameObject> iconContainers = new List<GameObject>();
     public GameUIHandler gameUIHandler;
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-
-    }
-
     public void PopulatePanel(List<GameObject> placeables)
     {
         Debug.Assert(iconContainers.Count > 0, "BuildPanel: No icon containers found!");

@@ -26,7 +26,7 @@ Transform:
   m_GameObject: {fileID: 272674422063799693}
   serializedVersion: 2
   m_LocalRotation: {x: 0.7071068, y: -0, z: -0, w: 0.7071068}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0.2, z: 0}
   m_LocalScale: {x: 0.512, y: 0.512, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -115,12 +115,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 536254755305005896}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.7071068, y: 0, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: 0, y: 1.2, z: 0}
+  m_LocalRotation: {x: -0.7071068, y: -0, z: -0, w: 0.7071068}
+  m_LocalPosition: {x: 0, y: 0.6, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 2743934825331788340}
+  m_Father: {fileID: 8813941646807811197}
   m_LocalEulerAnglesHint: {x: -90, y: 0, z: 0}
 --- !u!1 &966422089452886998
 GameObject:
@@ -150,7 +150,9 @@ Transform:
   m_LocalPosition: {x: 0, y: 0.6, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 8625543259901845269}
+  - {fileID: 2771992136723759927}
   m_Father: {fileID: 2743934825331788340}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1596390687284090846
@@ -784,9 +786,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 6282312813324006110}
-  - {fileID: 8625543259901845269}
   - {fileID: 8813941646807811197}
-  - {fileID: 2771992136723759927}
   - {fileID: 8266294922455506460}
   - {fileID: 2957154999059952039}
   m_Father: {fileID: 0}
@@ -891,8 +891,9 @@ MonoBehaviour:
   obstructPlacementColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
   targetingRange: 15
   attackCooldown: 3
-  projectilePrefab: {fileID: 3526158911752155115, guid: f683af320cf1b3c4ba63fad17c2fadd1, type: 3}
+  projectilePrefab: {fileID: 781191961485823815, guid: bb2eed99abbd55745813e5bd32feed64, type: 3}
   firePoint: {fileID: 2771992136723759927}
+  barrelPivot: {fileID: 8813941646807811197}
   lastAttackTime: 0
   targetingType: 0
   damageDone: 0
@@ -989,12 +990,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8253901346943012219}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.7, z: 0}
-  m_LocalScale: {x: 0.4, y: 0.5, z: 0.4}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0.099999964, z: 0}
+  m_LocalScale: {x: 0.40000004, y: 0.5, z: 0.40000004}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 2743934825331788340}
+  m_Father: {fileID: 8813941646807811197}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &4534646948399828012
 MeshFilter:

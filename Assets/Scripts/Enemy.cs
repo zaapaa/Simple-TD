@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.UI;
 using System;
 
 public class Enemy : MonoBehaviour, ISelectable
@@ -12,9 +13,8 @@ public class Enemy : MonoBehaviour, ISelectable
     public float waveBudget;
     public float reward;
     public int minSpawnWaveNumber;
-    public float waitTime;
+    public float rotationSpeed;
     public Sprite UIIcon;
-    private float waitTimer;
     public EnemyType enemyType;
 
     private NavMeshAgent agent;
@@ -24,12 +24,13 @@ public class Enemy : MonoBehaviour, ISelectable
     private EnemyWaveSpawner waveSpawner;
     private GameObject selectionVisual;
     private bool isSelected = false;
+    private Image healthBarImage;
+    private GameObject model;
 
-    public void Initialize(Transform spawn, Transform end, int spawnPositionInWave, EnemyWaveSpawner spawner)
+    public void Initialize(Transform spawn, Transform end, EnemyWaveSpawner spawner)
     {
         spawnPoint = spawn;
         target = end;
-        waitTimer = spawnPositionInWave * waitTime;
         waveSpawner = spawner;
         agent = GetComponent<NavMeshAgent>();
         CalculateTotalPathLength();
@@ -39,22 +40,19 @@ public class Enemy : MonoBehaviour, ISelectable
     void Start()
     {
         selectionVisual = transform.Find("Selection")?.gameObject;
+        model = transform.Find("Model")?.gameObject;
         health = maxHealth;
         agent.speed = speed;
+
+        // Get healthbar image component
+        healthBarImage = GetComponentInChildren<Image>();
+        agent.SetDestination(target.position);
+        agent.updateRotation = false;
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (waitTimer > 0)
-        {
-            waitTimer -= Time.deltaTime;
-            if (waitTimer <= 0)
-            {
-                agent.SetDestination(target.position);
-            }
-            return;
-        }
         // Update progress based on remaining distance
         if (target != null && totalPathLength > 0)
         {
@@ -66,6 +64,7 @@ public class Enemy : MonoBehaviour, ISelectable
         {
             ReachEndpoint();
         }
+        model.transform.Rotate(Vector3.up, rotationSpeed * Time.deltaTime);
     }
 
     void CalculateTotalPathLength()
@@ -103,6 +102,13 @@ public class Enemy : MonoBehaviour, ISelectable
     public void TakeDamage(float damage)
     {
         health -= damage;
+
+        // Update healthbar
+        if (healthBarImage != null)
+        {
+            healthBarImage.fillAmount = health / maxHealth;
+        }
+
         if (health <= 0)
         {
             Die();
@@ -113,6 +119,11 @@ public class Enemy : MonoBehaviour, ISelectable
     {
         // Give money to player
         GameManager.instance.IncreaseMoney(reward); // Adjust reward as needed
+        if (enemyType == EnemyType.Big)
+        {
+            waveSpawner.SpawnEnemy(waveSpawner.enemyPrefabs[0], transform.position);
+            waveSpawner.SpawnEnemy(waveSpawner.enemyPrefabs[0], transform.position);
+        }
         Destroy(gameObject);
     }
 
@@ -145,7 +156,7 @@ public class Enemy : MonoBehaviour, ISelectable
             _ => typeof(Enemy)
         };
     }
-    
+
     public EnemyType GetEnemyType()
     {
         return enemyType;
@@ -181,8 +192,8 @@ public enum EnemyType
 }
 
 // Marker types for enemy identification
-public class BasicEnemyType {}
-public class FastEnemyType {}
-public class StrongEnemyType {}
-public class BigEnemyType {}
+public class BasicEnemyType { }
+public class FastEnemyType { }
+public class StrongEnemyType { }
+public class BigEnemyType { }
 

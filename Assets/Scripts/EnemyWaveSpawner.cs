@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Collections;
 using System.Linq;
 using UnityEngine;
 using TMPro;
@@ -44,28 +45,29 @@ public class EnemyWaveSpawner : MonoBehaviour
 
     public void StartNextWave()
     {
-        SpawnWave();
+        StartCoroutine(SpawnWave());
         currentWave++;
         IncreaseWaveDifficulty();
         waveTimer = timeBetweenWaves;
     }
 
-    void SpawnWave()
+    private IEnumerator SpawnWave()
     {
         Dictionary<GameObject, int> enemySpawnCount = GetEnemySpawnCount();
         foreach (var enemy in enemySpawnCount)
         {
             for (int i = 0; i < enemy.Value; i++)
             {
-                SpawnEnemy(enemy.Key, i);
+                SpawnEnemy(enemy.Key, spawnPoint.position);
+                yield return new WaitForSeconds(enemyWaitInterval);
             }
         }
     }
-    void SpawnEnemy(GameObject enemyPrefab, int spawnPositionInWave)
+    public void SpawnEnemy(GameObject enemyPrefab, Vector3 spawnPosition)
     {
-        GameObject enemy = Instantiate(enemyPrefab, spawnPoint.position, enemyPrefab.transform.rotation);
+        GameObject enemy = Instantiate(enemyPrefab, spawnPosition, enemyPrefab.transform.rotation);
         enemy.transform.parent = transform;
-        enemy.GetComponent<Enemy>().Initialize(spawnPoint, endpoint, spawnPositionInWave, this);
+        enemy.GetComponent<Enemy>().Initialize(spawnPoint, endpoint, this);
     }
     Dictionary<GameObject, int> GetEnemySpawnCount()
     {

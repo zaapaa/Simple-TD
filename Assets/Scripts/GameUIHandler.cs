@@ -155,7 +155,7 @@ public class GameUIHandler : MonoBehaviour
 
     System.Collections.IEnumerator HideBuildPanelDelayed()
     {
-        yield return new WaitForSeconds(0.1f); // Wait 0.1 seconds
+        yield return new WaitForSeconds(0.1f*Time.timeScale); // Wait 0.1 seconds
         buildPanel.SetActive(false);
     }
 
@@ -348,11 +348,16 @@ public class GameUIHandler : MonoBehaviour
     
     void CompletePlacement(GameObject placementObject)
     {
+        if(!GameManager.instance.HasEnoughMoney(placementObject.GetComponent<Placeable>().placementCost))
+        {
+            return;
+        }
         bool wasPlacementSuccessful = placementObject.GetComponent<Placeable>().Place();
         if (wasPlacementSuccessful)
         {
             placedObjects.Add(placementObject);
             currentPlacement = null;
+            GameManager.instance.DecreaseMoney(placementObject.GetComponent<Placeable>().placementCost);
             if (Keyboard.current.shiftKey.isPressed)
             {
                 StartPlacement();
