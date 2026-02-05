@@ -441,7 +441,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.AspectRatioFitter
   m_AspectMode: 0
-  m_AspectRatio: 0.3598464
+  m_AspectRatio: 0.3595088
 --- !u!114 &66584897
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3572,7 +3572,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.AspectRatioFitter
   m_AspectMode: 0
-  m_AspectRatio: 2.925821
+  m_AspectRatio: 2.903662
 --- !u!114 &538233058
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4372,7 +4372,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.AspectRatioFitter
   m_AspectMode: 0
-  m_AspectRatio: 2.827577
+  m_AspectRatio: 2.806876
 --- !u!114 &745599402
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -11356,7 +11356,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.AspectRatioFitter
   m_AspectMode: 0
-  m_AspectRatio: 2.827577
+  m_AspectRatio: 2.806876
 --- !u!114 &2083624035
 MonoBehaviour:
   m_ObjectHideFlags: 0

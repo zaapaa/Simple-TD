@@ -54,13 +54,11 @@ public class EnemyWaveSpawner : MonoBehaviour
     private IEnumerator SpawnWave()
     {
         Dictionary<GameObject, int> enemySpawnCount = GetEnemySpawnCount();
-        foreach (var enemy in enemySpawnCount)
+        List<GameObject> randomSpawnWave = GetRandomizedSpawnWave(enemySpawnCount);
+        foreach (var enemy in randomSpawnWave)
         {
-            for (int i = 0; i < enemy.Value; i++)
-            {
-                SpawnEnemy(enemy.Key, spawnPoint.position);
-                yield return new WaitForSeconds(enemyWaitInterval);
-            }
+            SpawnEnemy(enemy, spawnPoint.position);
+            yield return new WaitForSeconds(enemyWaitInterval);
         }
     }
     public void SpawnEnemy(GameObject enemyPrefab, Vector3 spawnPosition)
@@ -107,6 +105,24 @@ public class EnemyWaveSpawner : MonoBehaviour
     float GetEnemyMinWaveBudget()
     {
         return enemyPrefabs.OrderBy(e => e.GetComponent<Enemy>().waveBudget).First().GetComponent<Enemy>().waveBudget;
+    }
+    List<GameObject> GetRandomizedSpawnWave(Dictionary<GameObject, int> enemySpawnCount)
+    {
+        List<GameObject> randomSpawnWave = new List<GameObject>();
+        foreach (var enemy in enemySpawnCount)
+        {
+            for (int i = 0; i < enemy.Value; i++)
+            {
+                randomSpawnWave.Add(enemy.Key);
+            }
+        }
+        // Modern Fisher-Yates shuffle (backward iteration)
+        for (int i = randomSpawnWave.Count - 1; i > 0; i--)
+        {
+            int randomIndex = Random.Range(0, i + 1);
+            (randomSpawnWave[i], randomSpawnWave[randomIndex]) = (randomSpawnWave[randomIndex], randomSpawnWave[i]);
+        }
+        return randomSpawnWave;
     }
     void IncreaseWaveDifficulty()
     {
