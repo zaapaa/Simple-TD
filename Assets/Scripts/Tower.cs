@@ -146,6 +146,19 @@ public class Tower : Placeable, ISelectable
         if (forcedTarget == null) return false;
         return Vector3.Distance(transform.position, forcedTarget.transform.position) <= targetingRange;
     }
+    public string GetInfoString()
+    {
+        Projectile projectile = projectilePrefab.GetComponent<Projectile>();
+        string info = "";
+        float attackTime = attackCooldown > 0 ? attackCooldown : 1f;
+        float dps = projectile.damage / attackTime;
+        string aspd = attackCooldown > 0 ? $"{1/attackCooldown:F2}/s" : "const";
+        info +=$"DPS: {dps:F0}\n";
+        info+=$"RNG: {targetingRange:F0}\n";
+        info+=$"ASPD: {aspd}\n";
+        info+=$"AOE: {(projectile.isAreaEffectDamage ? "Yes" : "No")}\n";
+        return info;
+    }
 
     public override void Select()
     {
@@ -187,6 +200,10 @@ public class Tower : Placeable, ISelectable
     public override SelectInfo GetSelectInfo()
     {
         SelectInfo selectInfo = new SelectInfo();
+        
+        Projectile projectile = projectilePrefab.GetComponent<Projectile>();
+        float attackTime = attackCooldown > 0 ? attackCooldown : 1f;
+        float dps = projectile.damage / attackTime;
         selectInfo.name = towerType switch
         {
             TowerType.Basic => "Basic Tower",
@@ -196,6 +213,9 @@ public class Tower : Placeable, ISelectable
         };
         selectInfo.damage = projectilePrefab.GetComponent<Projectile>().damage;
         selectInfo.attackRange = targetingRange;
+        selectInfo.dps = dps;
+        selectInfo.attackRate = attackCooldown > 0 ? 1f / attackCooldown : float.NegativeInfinity;
+        selectInfo.aoe = projectile.isAreaEffectDamage;
         selectInfo.damageDone = damageDone;
         selectInfo.killCount = killCount;
 

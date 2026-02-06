@@ -1,10 +1,25 @@
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using UnityEngine.EventSystems;
 
-public class BuildPanelButton : MonoBehaviour
+public class BuildPanelButton : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
     public GameObject linkedPrefab;
+    private GameObject tooltip;
+
+    void Start()
+    {
+        tooltip = transform.Find("Tooltip").gameObject;
+        tooltip.SetActive(false);
+        var tooltipText = tooltip.transform.Find("TooltipText").GetComponent<TextMeshProUGUI>();
+        if (linkedPrefab && linkedPrefab.GetComponent<Tower>() != null)
+        {
+            tooltipText.text = linkedPrefab.GetComponent<Tower>().GetInfoString();
+        } else {
+            tooltipText.text = "Wall that can be upgraded to a tower";
+        }
+    }
 
     protected virtual void Update()
     {
@@ -27,4 +42,14 @@ public class BuildPanelButton : MonoBehaviour
         Button button = GetComponent<Button>();
         button.onClick.AddListener(() => gameUIHandler.SelectBuildPlaceable(linkedPrefab));
     }
+
+    public void OnPointerEnter(PointerEventData eventData)
+    {
+        tooltip.SetActive(true);
+    }
+    public void OnPointerExit(PointerEventData eventData)
+    {
+        tooltip.SetActive(false);
+    }
+
 }

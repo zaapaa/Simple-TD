@@ -7,6 +7,9 @@ public class SelectInfo
     // Tower info
     public float damage;
     public float attackRange;
+    public float dps;
+    public float attackRate;
+    public bool aoe;
     public float damageDone;
     public int killCount;
 
@@ -26,8 +29,12 @@ public class SelectInfo
         // Tower
         if (damage > 0)
         {
+            string attackRateText = attackRate == float.NegativeInfinity ? "const" : $"{attackRate:F2}/s";
             infoText += multi ? $"Avg Damage: {damage:F0}\n" : $"Damage: {damage:F0}\n";
+            infoText += multi ? $"Avg DPS: {dps:F0}\n" : $"DPS: {dps:F0}\n";
             infoText += multi ? $"Max Attack Range: {attackRange:F0}\n" : $"Attack Range: {attackRange:F0}\n";
+            infoText += multi ? $"Avg Attack Rate: {attackRateText}\n" : $"Attack Rate: {attackRateText}\n";
+            infoText += multi ? $"AOE: {aoe}\n" : $"AOE: {aoe}\n";
             infoText += multi ? $"Damage Done: {damageDone:F0}\n" : $"Damage Done: {damageDone:F0}\n";
             infoText += multi ? $"Kill Count: {killCount:F0}\n" : $"Kill Count: {killCount:F0}\n";
         }
@@ -52,6 +59,9 @@ public class SelectInfo
         combinedInfo.name = "Multiple selections";
         combinedInfo.damage = (info1.damage + info2.damage) / 2f;
         combinedInfo.attackRange = Mathf.Max(info1.attackRange, info2.attackRange);
+        combinedInfo.dps = (info1.dps + info2.dps) / 2f;
+        combinedInfo.attackRate = (info1.attackRate + info2.attackRate) / 2f;
+        combinedInfo.aoe = info1.aoe || info2.aoe;
         combinedInfo.damageDone = info1.damageDone + info2.damageDone;
         combinedInfo.killCount = info1.killCount + info2.killCount;
         combinedInfo.maxHealth = info1.maxHealth + info2.maxHealth;
