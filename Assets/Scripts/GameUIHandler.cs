@@ -56,9 +56,20 @@ public class GameUIHandler : MonoBehaviour
                 currentPlacement = null;
                 selectedBuildPlaceable = null;
             }
-            // TODO: if tower(s) selected and enemy right clicked, override towers' target to that enemy. then return to prevent build panel
-            ClearSelection();
-            ShowPanel(buildPanel, placeablePrefabs);
+            // TODO: if tower(s) selected and enemy right clicked, override towers' target to that enemy
+            GameObject forceTargetEnemy;
+            if (IsOnlyTowersSelected() && IsEnemyUnderMouse(out forceTargetEnemy))
+            {
+                foreach (Tower tower in selectedObjects)
+                {
+                    tower.ForceTarget(forceTargetEnemy);
+                }
+            }
+            else
+            {
+                ClearSelection();
+                ShowPanel(buildPanel, placeablePrefabs);
+            }
         }
         if (Mouse.current.leftButton.wasPressedThisFrame)
         {
@@ -224,6 +235,30 @@ public class GameUIHandler : MonoBehaviour
             return hit.collider.gameObject;
         }
         return null;
+    }
+
+    bool IsEnemyUnderMouse(out GameObject enemy)
+    {
+        enemy = null;
+        GameObject objectAtMouse = GetObjectAtMousePosition();
+        if (objectAtMouse != null)
+        {
+            if (objectAtMouse.CompareTag("Enemy"))
+            {
+                enemy = objectAtMouse;
+                return true;
+            }
+            while (objectAtMouse.transform.parent != null)
+            {
+                objectAtMouse = objectAtMouse.transform.parent.gameObject;
+                if (objectAtMouse.CompareTag("Enemy"))
+                {
+                    enemy = objectAtMouse;
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     void ClearSelection()

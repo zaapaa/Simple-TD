@@ -28,7 +28,9 @@ public class Enemy : MonoBehaviour, ISelectable
     private Image healthBarImage;
     private GameObject model;
     private GameObject targetVisual;
+    private GameObject forceTargetVisual;
     private List<Tower> targetedBy = new List<Tower>();
+    private List<Tower> forceTargetedBy = new List<Tower>();
 
     public void Initialize(Transform spawn, Transform end, EnemyWaveSpawner spawner)
     {
@@ -45,6 +47,7 @@ public class Enemy : MonoBehaviour, ISelectable
         selectionVisual = transform.Find("Selection")?.gameObject;
         model = transform.Find("Model")?.gameObject;
         targetVisual = transform.Find("Target")?.gameObject;
+        forceTargetVisual = transform.Find("ForceTarget")?.gameObject;
         health = maxHealth;
         agent.speed = speed;
 
@@ -83,6 +86,15 @@ public class Enemy : MonoBehaviour, ISelectable
         {
             targetVisual.SetActive(false);
         }
+        if (forceTargetedBy.Count > 0)
+        {
+            forceTargetVisual.SetActive(true);
+        }
+        else
+        {
+            forceTargetVisual.SetActive(false);
+        }
+
     }
 
     void CalculateTotalPathLength()
@@ -160,6 +172,20 @@ public class Enemy : MonoBehaviour, ISelectable
     public void Untarget(Tower tower)
     {
         targetedBy.Remove(tower);
+    }
+
+    public void ForceTarget(Tower tower)
+    {
+        if (forceTargetedBy.Contains(tower))
+        {
+            return;
+        }
+        forceTargetedBy.Add(tower);
+    }
+
+    public void UnForceTarget(Tower tower)
+    {
+        forceTargetedBy.Remove(tower);
     }
 
     // ISelectable implementation

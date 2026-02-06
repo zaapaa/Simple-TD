@@ -17,7 +17,9 @@ public class Tower : Placeable, ISelectable
     public TowerType towerType;
     private GameObject targetingRangeVisual;
     private float attackTimer;
+    private GameObject target;
     private GameObject oldTarget;
+    public GameObject forcedTarget;
 
     protected override void Start()
     {
@@ -33,42 +35,40 @@ public class Tower : Placeable, ISelectable
         base.Update();
         if (!isBeingPlaced)
         {
-            // Tower unselected -> Untarget old target if it existed
-            if (!IsSelected() && oldTarget != null)
-            {
-                oldTarget.GetComponent<Enemy>().Untarget(this);
-                oldTarget = null;
-            }
-            GameObject target = GetTarget();
-            if (target == null)
-            {
-                // There was a target but not anymore -> untarget old target (e.g. old target moved out of range)
-                if (oldTarget != null)
-                {
-                    oldTarget.GetComponent<Enemy>().Untarget(this);
-                }
-                return;
-            }
-            // Tower has new target -> untarget old target
-            if (IsSelected() && target != oldTarget)
-            {
-                if (oldTarget != null)
-                {
-                    oldTarget.GetComponent<Enemy>().Untarget(this);
-                }
-                target.GetComponent<Enemy>().Target(this);
-            }
             attackTimer += Time.deltaTime;
             if (attackTimer >= attackCooldown)
             {
+                target = GetTarget();
+                if(ForcedTargetInRange())
+                {
+                    target = forcedTarget;
+                }
+                if (target == null)
+                {
+                    // There was a target but not anymore -> untarget old target (e.g. old target moved out of range)
+                    if (oldTarget != null)
+                    {
+                        oldTarget.GetComponent<Enemy>().Untarget(this);
+                    }
+                    return;
+                }
+                // Tower has new target -> untarget old target
+                if (IsSelected() && target != oldTarget)
+                {
+                    if (oldTarget != null)
+                    {
+                        oldTarget.GetComponent<Enemy>().Untarget(this);
+                    }
+                    target.GetComponent<Enemy>().Target(this);
+                }
                 Attack(target);
                 RotateBarrel(target);
                 // tower attacks only once if attackcooldown is negative (laser tower)
                 attackTimer = attackCooldown < 0 ? float.NegativeInfinity : attackTimer - attackCooldown;
-            }
-            if (IsSelected())
-            {
-                oldTarget = target;
+                if (IsSelected())
+                {
+                    oldTarget = target;
+                }
             }
         }
     }
@@ -132,17 +132,45 @@ public class Tower : Placeable, ISelectable
         }
         return placed;
     }
+    public void ForceTarget(GameObject forcetarget)
+    {
+        if (forcedTarget != null)
+        {
+            forcedTarget.GetComponent<Enemy>()?.UnForceTarget(this);
+        }
+        forcedTarget = forcetarget;
+        forcedTarget?.GetComponent<Enemy>()?.ForceTarget(this);
+    }
+    private bool ForcedTargetInRange()
+    {
+        if (forcedTarget == null) return false;
+        return Vector3.Distance(transform.position, forcedTarget.transform.position) <= targetingRange;
+    }
 
     public override void Select()
     {
         base.Select();
         targetingRangeVisual.SetActive(true);
+        target?.GetComponent<Enemy>()?.Target(this);
     }
 
     public override void Deselect()
     {
         base.Deselect();
         targetingRangeVisual.SetActive(false);
+        if (target != null)
+        {
+            target.GetComponent<Enemy>()?.Untarget(this);
+        }
+        if (oldTarget != null)
+        {
+            oldTarget?.GetComponent<Enemy>()?.Untarget(this);
+            oldTarget = null;
+        }
+        if (forcedTarget != null)
+        {
+            forcedTarget.GetComponent<Enemy>()?.UnForceTarget(this);
+        }
     }
 
     public override Type GetSelectableType()
