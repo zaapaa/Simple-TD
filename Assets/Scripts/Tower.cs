@@ -11,7 +11,7 @@ public class Tower : Placeable, ISelectable
     public Transform barrelPivot;
     public bool canBarrelTilt;
     public float lastAttackTime;
-    public TargetingType targetingType = TargetingType.Nearest;
+    public TargetingType targetingType = TargetingType.First;
     public float damageDone;
     public int killCount;
     public TowerType towerType;
@@ -134,12 +134,13 @@ public class Tower : Placeable, ISelectable
     }
     public void ForceTarget(GameObject forcetarget)
     {
+        if (forcetarget == null) return;
         if (forcedTarget != null)
         {
             forcedTarget.GetComponent<Enemy>()?.UnForceTarget(this);
         }
         forcedTarget = forcetarget;
-        forcedTarget?.GetComponent<Enemy>()?.ForceTarget(this);
+        forcedTarget.GetComponent<Enemy>()?.ForceTarget(this);
     }
     private bool ForcedTargetInRange()
     {
@@ -164,7 +165,10 @@ public class Tower : Placeable, ISelectable
     {
         base.Select();
         targetingRangeVisual.SetActive(true);
-        target?.GetComponent<Enemy>()?.Target(this);
+        if (target != null)
+        {
+            target.GetComponent<Enemy>()?.Target(this);
+        }
     }
 
     public override void Deselect()
@@ -177,7 +181,7 @@ public class Tower : Placeable, ISelectable
         }
         if (oldTarget != null)
         {
-            oldTarget?.GetComponent<Enemy>()?.Untarget(this);
+            oldTarget.GetComponent<Enemy>()?.Untarget(this);
             oldTarget = null;
         }
         if (forcedTarget != null)

@@ -16,7 +16,9 @@ public class BuildPanelButton : MonoBehaviour, IPointerEnterHandler, IPointerExi
         if (linkedPrefab && linkedPrefab.GetComponent<Tower>() != null)
         {
             tooltipText.text = linkedPrefab.GetComponent<Tower>().GetInfoString();
-        } else {
+        }
+        else
+        {
             tooltipText.text = "Wall that can be upgraded to a tower";
         }
     }
@@ -40,7 +42,10 @@ public class BuildPanelButton : MonoBehaviour, IPointerEnterHandler, IPointerExi
     public virtual void SetupButton(GameUIHandler gameUIHandler)
     {
         Button button = GetComponent<Button>();
-        button.onClick.AddListener(() => gameUIHandler.SelectBuildPlaceable(linkedPrefab));
+        button.onClick.AddListener(() => {
+            gameUIHandler.SelectBuildPlaceable(linkedPrefab);
+            tooltip.SetActive(false);
+        });
     }
 
     public void OnPointerEnter(PointerEventData eventData)
@@ -51,5 +56,6 @@ public class BuildPanelButton : MonoBehaviour, IPointerEnterHandler, IPointerExi
     {
         tooltip.SetActive(false);
     }
+    
 
 }

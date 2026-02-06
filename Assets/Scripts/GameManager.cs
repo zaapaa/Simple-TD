@@ -8,11 +8,12 @@ public class GameManager : MonoBehaviour
     private int currentLives;
     private float currentMoney;
     private float gameSpeed;
-    private bool isGameOver;
     private bool isPaused;
+    public bool isGameOver;
     public GameObject livesText;
     public GameObject moneyText;
     public GameObject waveTimerText;
+    public GameObject gameOverText;
 
     public static GameManager instance;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -25,7 +26,6 @@ public class GameManager : MonoBehaviour
         currentLives = maxLives;
         currentMoney = startingMoney;
         gameSpeed = 1f;
-        isGameOver = false;
         isPaused = false;
         UpdateUI();
     }
@@ -35,6 +35,7 @@ public class GameManager : MonoBehaviour
         currentLives -= count;
         if (currentLives <= 0)
         {
+            gameOverText.SetActive(true);
             isGameOver = true;
         }
         UpdateUI();

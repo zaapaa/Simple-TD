@@ -30,7 +30,7 @@ public class EnemyWaveSpawner : MonoBehaviour
         timeBetweenWaves = timeBetweenWavesInitial;
         waveTimer = timeBetweenWaves;
         enemyWaitInterval = enemyWaitIntervalInitial;
-        StartNextWave();
+        // StartNextWave();
     }
 
     // Update is called once per frame

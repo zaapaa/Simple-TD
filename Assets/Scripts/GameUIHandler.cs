@@ -43,6 +43,14 @@ public class GameUIHandler : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (GameManager.instance.isGameOver)
+        {
+            if (Keyboard.current.anyKey.wasPressedThisFrame)
+            {
+                UnityEngine.SceneManagement.SceneManager.LoadScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name);
+            }
+            return;
+        }
         // Build placeable selected from build panel, begin placement
         if (selectedBuildPlaceable != null)
         {
@@ -56,7 +64,6 @@ public class GameUIHandler : MonoBehaviour
                 currentPlacement = null;
                 selectedBuildPlaceable = null;
             }
-            // TODO: if tower(s) selected and enemy right clicked, override towers' target to that enemy
             GameObject forceTargetEnemy;
             if (IsOnlyTowersSelected() && IsEnemyUnderMouse(out forceTargetEnemy))
             {
@@ -120,7 +127,55 @@ public class GameUIHandler : MonoBehaviour
                 ShowPanel(upgradePanel, GetUpgradePrefabs());
             }
         }
-
+        
+        if (Keyboard.current.digit1Key.wasReleasedThisFrame)
+        {
+            if(GameManager.instance.HasEnoughMoney(placeablePrefabs[0].GetComponent<Placeable>().placementCost))
+            {
+                SelectBuildPlaceable(placeablePrefabs[0]);
+                StartPlacement();
+            }
+        }
+        if (Keyboard.current.digit2Key.wasReleasedThisFrame)
+        {
+            if(GameManager.instance.HasEnoughMoney(placeablePrefabs[1].GetComponent<Placeable>().placementCost))
+            {
+                SelectBuildPlaceable(placeablePrefabs[1]);
+                StartPlacement();
+            }
+        }
+        if (Keyboard.current.digit3Key.wasReleasedThisFrame)
+        {
+            if(GameManager.instance.HasEnoughMoney(placeablePrefabs[2].GetComponent<Placeable>().placementCost))
+            {
+                SelectBuildPlaceable(placeablePrefabs[2]);
+                StartPlacement();
+            }
+        }
+        if (Keyboard.current.digit4Key.wasReleasedThisFrame)
+        {
+            if(GameManager.instance.HasEnoughMoney(placeablePrefabs[3].GetComponent<Placeable>().placementCost))
+            {
+                SelectBuildPlaceable(placeablePrefabs[3]);
+                StartPlacement();
+            }
+        }
+        if (Keyboard.current.spaceKey.wasPressedThisFrame)
+        {
+            GameManager.instance.TogglePause();
+        }
+        if (Keyboard.current.f1Key.wasPressedThisFrame)
+        {
+            GameManager.instance.SetGameSpeed(1f);
+        }
+        if (Keyboard.current.f2Key.wasPressedThisFrame)
+        {
+            GameManager.instance.SetGameSpeed(2f);
+        }
+        if (Keyboard.current.f3Key.wasPressedThisFrame)
+        {
+            GameManager.instance.SetGameSpeed(4f);
+        }
         ShowSelectedInformation();
     }
 
