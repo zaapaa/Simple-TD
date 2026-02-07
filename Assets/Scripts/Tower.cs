@@ -1,6 +1,7 @@
 using UnityEngine;
 using System;
 using System.Linq;
+using System.Collections;
 
 public class Tower : Placeable, ISelectable
 {
@@ -39,7 +40,7 @@ public class Tower : Placeable, ISelectable
             if (attackTimer >= attackCooldown)
             {
                 target = GetTarget();
-                if(ForcedTargetInRange())
+                if (ForcedTargetInRange())
                 {
                     target = forcedTarget;
                 }
@@ -126,11 +127,21 @@ public class Tower : Placeable, ISelectable
     public override bool Place(bool force = false)
     {
         bool placed = base.Place(force);
+        if (force)
+        {
+            targetingRangeVisual = transform.Find("TargetingRange")?.gameObject;
+        }
         if (placed)
         {
-            targetingRangeVisual?.SetActive(false);
+            targetingRangeVisual.SetActive(false);
+            StartCoroutine(DelayedHideTargetingRangeVisual());
         }
         return placed;
+    }
+    private IEnumerator DelayedHideTargetingRangeVisual()
+    {
+        yield return null;
+        targetingRangeVisual.SetActive(false);
     }
     public void ForceTarget(GameObject forcetarget)
     {
@@ -153,11 +164,11 @@ public class Tower : Placeable, ISelectable
         string info = "";
         float attackTime = attackCooldown > 0 ? attackCooldown : 1f;
         float dps = projectile.damage / attackTime;
-        string aspd = attackCooldown > 0 ? $"{1/attackCooldown:F2}/s" : "const";
-        info +=$"DPS: {dps:F0}\n";
-        info+=$"RNG: {targetingRange:F0}\n";
-        info+=$"ASPD: {aspd}\n";
-        info+=$"AOE: {(projectile.isAreaEffectDamage ? "Yes" : "No")}\n";
+        string aspd = attackCooldown > 0 ? $"{1 / attackCooldown:F2}/s" : "const";
+        info += $"DPS: {dps:F0}\n";
+        info += $"RNG: {targetingRange:F0}\n";
+        info += $"ASPD: {aspd}\n";
+        info += $"AOE: {(projectile.isAreaEffectDamage ? "Yes" : "No")}\n";
         return info;
     }
 
@@ -204,7 +215,7 @@ public class Tower : Placeable, ISelectable
     public override SelectInfo GetSelectInfo()
     {
         SelectInfo selectInfo = new SelectInfo();
-        
+
         Projectile projectile = projectilePrefab.GetComponent<Projectile>();
         float attackTime = attackCooldown > 0 ? attackCooldown : 1f;
         float dps = projectile.damage / attackTime;

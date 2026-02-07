@@ -73,7 +73,7 @@ public class Enemy : MonoBehaviour, ISelectable
         }
 
         // Check if reached destination
-        if (!agent.pathPending && agent.remainingDistance < 0.5f)
+        if (Vector3.Distance(transform.position, endPoint.position) < 0.5f)
         {
             ReachEndpoint();
         }
@@ -198,7 +198,14 @@ public class Enemy : MonoBehaviour, ISelectable
     public void Deselect()
     {
         isSelected = false;
-        selectionVisual.SetActive(false);
+        if (selectionVisual == null)
+        {
+            selectionVisual = transform.Find("SelectionVisual")?.gameObject;
+        }
+        if (selectionVisual != null)
+        {
+            selectionVisual.SetActive(false);
+        }
     }
 
     public bool IsSelected()
