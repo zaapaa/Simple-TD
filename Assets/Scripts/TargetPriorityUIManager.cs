@@ -7,7 +7,7 @@ public class TargetPriorityUIManager : MonoBehaviour
 {
     [System.Serializable]
     public class TargetingEvent : UnityEvent<TargetingType> { }
-    
+
     public TargetingEvent onTargetingTypeSelected;
     public List<Button> buttons = new List<Button>();
 
@@ -16,19 +16,14 @@ public class TargetPriorityUIManager : MonoBehaviour
 
     public void UpdateTargetingButtons(List<ISelectable> selectedObjects)
     {
-        TargetingType targetingType = TargetingType.None;
+        List<TargetingType> targetingTypes = new List<TargetingType>();
         foreach (ISelectable selectable in selectedObjects)
         {
             if (selectable is Tower tower)
             {
-                if (targetingType == TargetingType.None)
+                if (!targetingTypes.Contains(tower.targetingType))
                 {
-                    targetingType = tower.targetingType;
-                }
-                else if (targetingType != tower.targetingType)
-                {
-                    targetingType = TargetingType.None;
-                    break;
+                    targetingTypes.Add(tower.targetingType);
                 }
             }
             else
@@ -36,32 +31,35 @@ public class TargetPriorityUIManager : MonoBehaviour
                 break;
             }
         }
-        SetTargetingButtons(targetingType);
+        SetTargetingButtons(targetingTypes);
     }
-    public void SetTargetingButtons(TargetingType targetingType)
+    public void SetTargetingButtons(List<TargetingType> targetingTypes)
     {
         foreach (Button button in buttons)
         {
             button.image.color = defaultButtonColor;
         }
 
-        for (int i = 0; i < buttons.Count; i++)
+        foreach (TargetingType targetingType in targetingTypes)
         {
-            if (buttons[i].GetComponent<TargetingButton>().targetingType == targetingType)
+            for (int i = 0; i < buttons.Count; i++)
             {
-                buttons[i].image.color = selectedButtonColor;
+                if (buttons[i].GetComponent<TargetingButton>().targetingType == targetingType)
+                {
+                    buttons[i].image.color = selectedButtonColor;
+                }
             }
         }
-        
-        gameObject.SetActive(targetingType != TargetingType.None);
+
+        gameObject.SetActive(targetingTypes.Count > 0);
     }
 
     public void Clicked(TargetingType type)
     {
         onTargetingTypeSelected?.Invoke(type);
-        SetTargetingButtons(type);
+        SetTargetingButtons(new List<TargetingType> { type });
     }
-    
+
     // Helper methods for button onClick (these will appear in Inspector)
     public void SetTargetingNearest() => Clicked(TargetingType.Nearest);
     public void SetTargetingFarthest() => Clicked(TargetingType.Farthest);
