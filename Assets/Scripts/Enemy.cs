@@ -3,6 +3,7 @@ using UnityEngine.AI;
 using UnityEngine.UI;
 using System;
 using System.Collections.Generic;
+using System.Collections;
 
 public class Enemy : MonoBehaviour, ISelectable
 {
@@ -25,6 +26,7 @@ public class Enemy : MonoBehaviour, ISelectable
     private EnemyWaveSpawner waveSpawner;
     private GameObject selectionVisual;
     private bool isSelected = false;
+    public bool hasSpawnImmunity = true;
     private Image healthBarImage;
     private GameObject model;
     private GameObject targetVisual;
@@ -60,7 +62,7 @@ public class Enemy : MonoBehaviour, ISelectable
         {
             rotationSpeed *= -1f;
         }
-
+        StartCoroutine(RemoveSpawnImmunity());
     }
 
     // Update is called once per frame
@@ -95,6 +97,11 @@ public class Enemy : MonoBehaviour, ISelectable
             forceTargetVisual.SetActive(false);
         }
 
+    }
+    IEnumerator RemoveSpawnImmunity()
+    {
+        yield return new WaitForSeconds(1f);
+        hasSpawnImmunity = false;
     }
 
     void CalculateTotalPathLength()
@@ -132,6 +139,7 @@ public class Enemy : MonoBehaviour, ISelectable
 
     public void TakeDamage(float damage)
     {
+        if (hasSpawnImmunity) return;
         health -= damage;
 
         // Update healthbar

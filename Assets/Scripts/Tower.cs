@@ -81,7 +81,7 @@ public class Tower : Placeable, ISelectable
     {
         var enemiesInRange = FindObjectsByType<Enemy>(FindObjectsSortMode.None)
             .Where(e => Vector3.Distance(e.transform.position, transform.position) < targetingRange)
-            .Where(e => e.health > 0);
+            .Where(e => e.health > 0 && !e.hasSpawnImmunity);
 
         if (!enemiesInRange.Any()) return null;
 
