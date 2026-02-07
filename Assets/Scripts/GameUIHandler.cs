@@ -24,6 +24,7 @@ public class GameUIHandler : MonoBehaviour
     public TextMeshProUGUI selectInfoText;
     private GameObject selectedBuildPlaceable = null;
     public EnemyWaveSpawner waveSpawner = null;
+    public GameObject enemyDirectionArrow;
     public static GameUIHandler instance = null;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -181,6 +182,7 @@ public class GameUIHandler : MonoBehaviour
 
     void ShowPanel(GameObject panel, List<GameObject> prefabs)
     {
+        enemyDirectionArrow.SetActive(false);
         panel.GetComponent<BuildPanel>().PopulatePanel(prefabs);
         panel.SetActive(true);
         Vector2 mousePosition = Mouse.current.position.ReadValue();
@@ -454,6 +456,7 @@ public class GameUIHandler : MonoBehaviour
         if (waveSpawner != null)
         {
             waveSpawner.StartNextWave();
+            enemyDirectionArrow.SetActive(false);
         }
     }
     System.Collections.IEnumerator ValidatePlacementAndPlace(GameObject placementObject)
