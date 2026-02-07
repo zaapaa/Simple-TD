@@ -18,6 +18,7 @@ public class Tower : Placeable, ISelectable
     public TowerType towerType;
     private GameObject targetingRangeVisual;
     private float attackTimer;
+    private float extraTime;
     private GameObject target;
     private GameObject oldTarget;
     public GameObject forcedTarget;
@@ -47,9 +48,11 @@ public class Tower : Placeable, ISelectable
                     {
                         oldTarget.GetComponent<Enemy>().Untarget(this);
                     }
+                    extraTime += Time.deltaTime;
                     return;
                 }
-                attackTimer = attackCooldown < 0 ? float.NegativeInfinity : attackTimer - attackCooldown;
+                attackTimer = attackCooldown < 0 ? float.NegativeInfinity : attackTimer - attackCooldown - extraTime;
+                extraTime = 0;
                 if (forcedTarget != target && ForcedTargetInRange())
                 {
                     target = forcedTarget;
