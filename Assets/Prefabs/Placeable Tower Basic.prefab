@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 6453588085105820787}
   - component: {fileID: -4924734489112336544}
   - component: {fileID: 2342756293269142910}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Placeable Tower Basic
   m_TagString: Placeable
   m_Icon: {fileID: 0}
@@ -140,7 +140,7 @@ MonoBehaviour:
   invalidPlacementColor: {r: 1, g: 0, b: 0, a: 1}
   obstructPlacementColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
   targetingRange: 10
-  attackCooldown: 0.67
+  attackCooldown: 0.6666667
   projectilePrefab: {fileID: 3526158911752155115, guid: f683af320cf1b3c4ba63fad17c2fadd1, type: 3}
   firePoint: {fileID: 5196352616581713806}
   barrelPivot: {fileID: 9120214219678158284}
@@ -227,7 +227,7 @@ GameObject:
   - component: {fileID: 7470392523362039286}
   - component: {fileID: 8912606819619344295}
   - component: {fileID: 1272483408321155709}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Selection (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -336,7 +336,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5196352616581713806}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Shot Spawn
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -368,7 +368,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3404458750500927824}
   - component: {fileID: 4380556907548307040}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: TargetingRange
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -461,7 +461,7 @@ GameObject:
   - component: {fileID: 4204025726660211628}
   - component: {fileID: 2761948857007311357}
   - component: {fileID: 5499842505553384487}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Selection (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -573,7 +573,7 @@ GameObject:
   - component: {fileID: 1790471524969538097}
   - component: {fileID: 2738056825068841720}
   - component: {fileID: 2433227359086354951}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Barrel
   m_TagString: PlaceablePart
   m_Icon: {fileID: 0}
@@ -688,7 +688,7 @@ GameObject:
   - component: {fileID: 7903476981485014653}
   - component: {fileID: 7022780570892586265}
   - component: {fileID: 1510935485167671508}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Sphere
   m_TagString: PlaceablePart
   m_Icon: {fileID: 0}
@@ -800,7 +800,7 @@ GameObject:
   - component: {fileID: 3463978330166014851}
   - component: {fileID: 3175423896911006162}
   - component: {fileID: 5050342166409761800}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Selection (3)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -912,7 +912,7 @@ GameObject:
   - component: {fileID: 2462696023735537210}
   - component: {fileID: 6599469353615533040}
   - component: {fileID: 2897544806440175940}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Barrel (1)
   m_TagString: PlaceablePart
   m_Icon: {fileID: 0}
@@ -1026,7 +1026,7 @@ GameObject:
   - component: {fileID: 3266000850784896796}
   - component: {fileID: 3553604803734060365}
   - component: {fileID: 6581945955008749719}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Selection
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1135,7 +1135,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 9120214219678158284}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Barrel Pivot
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1168,7 +1168,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6374733589635487535}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Selection
   m_TagString: Untagged
   m_Icon: {fileID: 0}

@@ -253,6 +253,7 @@ public class GameUIHandler : MonoBehaviour
             {
                 float cost = upgradePrefab.GetComponent<Placeable>().placementCost - (selectedObject as Wall).placementCost;
                 if (!GameManager.instance.HasEnoughMoney(cost)) break;
+                GameManager.instance.DecreaseMoney(cost);
                 selectedObject.Deselect();
                 itemsToRemove.Add(selectedObject);
                 (selectedObject as Wall).Upgrade(upgradePrefab);

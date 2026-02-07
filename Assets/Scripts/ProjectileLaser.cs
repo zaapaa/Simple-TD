@@ -71,7 +71,8 @@ public class ProjectileLaser : Projectile
     private void SetEndPosition()
     {
         RaycastHit hit;
-        if (Physics.Raycast(source.position, target.position - source.position, out hit))
+        int layerMask = ~(1 << 8); //exclude layer 8 (all Placeables)
+        if (Physics.Raycast(source.position, target.position - source.position, out hit, Mathf.Infinity, layerMask))
         {
             endPosition = hit.point;
         }

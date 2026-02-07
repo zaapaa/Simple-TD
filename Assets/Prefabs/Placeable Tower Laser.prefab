@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 6760063353600045754}
   - component: {fileID: 4214328647613400335}
   - component: {fileID: 5672407755221313795}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Barrel
   m_TagString: PlaceablePart
   m_Icon: {fileID: 0}
@@ -132,7 +132,7 @@ GameObject:
   - component: {fileID: 3464603236073451799}
   - component: {fileID: 5250165205406177333}
   - component: {fileID: 408361375607920682}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Cylinder (2)
   m_TagString: PlaceablePart
   m_Icon: {fileID: 0}
@@ -245,7 +245,7 @@ GameObject:
   - component: {fileID: 6999842978882467476}
   - component: {fileID: 8009459960260716323}
   - component: {fileID: 8296909933431299442}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Selection
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -333,7 +333,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7640520391485550727}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Selection
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -371,7 +371,7 @@ GameObject:
   - component: {fileID: 6354732830028486591}
   - component: {fileID: 6167252807721599272}
   - component: {fileID: 1221747929835358538}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Sphere (1)
   m_TagString: PlaceablePart
   m_Icon: {fileID: 0}
@@ -483,7 +483,7 @@ GameObject:
   - component: {fileID: 7332700703690509788}
   - component: {fileID: 1550402181013894638}
   - component: {fileID: 5188638976424828761}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Sphere
   m_TagString: PlaceablePart
   m_Icon: {fileID: 0}
@@ -595,7 +595,7 @@ GameObject:
   - component: {fileID: 1817984267136901024}
   - component: {fileID: 81910329076699542}
   - component: {fileID: 7728450358704436976}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Cylinder (5)
   m_TagString: PlaceablePart
   m_Icon: {fileID: 0}
@@ -712,7 +712,7 @@ GameObject:
   - component: {fileID: 2893945091040449815}
   - component: {fileID: 1423603563544114038}
   - component: {fileID: -5038665656290453864}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Placeable Tower Laser
   m_TagString: Placeable
   m_Icon: {fileID: 0}
@@ -923,7 +923,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2925138921450153702}
   - component: {fileID: 3435965608037602890}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: TargetingRange
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1013,7 +1013,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7177809230420757581}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Shot Spawn
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1047,7 +1047,7 @@ GameObject:
   - component: {fileID: 994669158987511475}
   - component: {fileID: 4008686244100908318}
   - component: {fileID: 629854518427994066}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Cylinder (3)
   m_TagString: PlaceablePart
   m_Icon: {fileID: 0}
@@ -1161,7 +1161,7 @@ GameObject:
   - component: {fileID: 3990833958900554441}
   - component: {fileID: 2270148756886785442}
   - component: {fileID: 7214141213193652846}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Cylinder (1)
   m_TagString: PlaceablePart
   m_Icon: {fileID: 0}
@@ -1275,7 +1275,7 @@ GameObject:
   - component: {fileID: 871604149425198856}
   - component: {fileID: 8915880023778842885}
   - component: {fileID: 7312994373620462739}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Cylinder (4)
   m_TagString: PlaceablePart
   m_Icon: {fileID: 0}
@@ -1388,7 +1388,7 @@ GameObject:
   - component: {fileID: 1944545509258236255}
   - component: {fileID: 1513007892270924008}
   - component: {fileID: 647553441483406009}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Selection (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1476,7 +1476,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5604024814829234014}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Barrel Pivot
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1512,7 +1512,7 @@ GameObject:
   - component: {fileID: 1580042504147776951}
   - component: {fileID: 88656387317745306}
   - component: {fileID: 5167184373298172163}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Cylinder
   m_TagString: PlaceablePart
   m_Icon: {fileID: 0}
@@ -1625,7 +1625,7 @@ GameObject:
   - component: {fileID: 137311036120182869}
   - component: {fileID: 1145307210665943522}
   - component: {fileID: 1434159068275481523}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Selection (3)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1715,7 +1715,7 @@ GameObject:
   - component: {fileID: 1130037423403177352}
   - component: {fileID: 120913788787016767}
   - component: {fileID: 2138726822664224366}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Selection (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}

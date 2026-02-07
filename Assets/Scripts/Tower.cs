@@ -40,10 +40,6 @@ public class Tower : Placeable, ISelectable
             if (attackTimer >= attackCooldown)
             {
                 target = GetTarget();
-                if (ForcedTargetInRange())
-                {
-                    target = forcedTarget;
-                }
                 if (target == null)
                 {
                     // There was a target but not anymore -> untarget old target (e.g. old target moved out of range)
@@ -52,6 +48,11 @@ public class Tower : Placeable, ISelectable
                         oldTarget.GetComponent<Enemy>().Untarget(this);
                     }
                     return;
+                }
+                attackTimer = attackCooldown < 0 ? float.NegativeInfinity : attackTimer - attackCooldown;
+                if (forcedTarget != target && ForcedTargetInRange())
+                {
+                    target = forcedTarget;
                 }
                 // Tower has new target -> untarget old target
                 if (IsSelected() && target != oldTarget)
@@ -65,7 +66,6 @@ public class Tower : Placeable, ISelectable
                 Attack(target);
                 RotateBarrel(target);
                 // tower attacks only once if attackcooldown is negative (laser tower)
-                attackTimer = attackCooldown < 0 ? float.NegativeInfinity : attackTimer - attackCooldown;
                 if (IsSelected())
                 {
                     oldTarget = target;
