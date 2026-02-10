@@ -16,13 +16,12 @@ A Unity tower defense game demonstrating Object-Oriented Programming principles 
 - **Force Targeting**: Right-click enemies to force towers to target specific enemies
 - **Wall-to-Tower Upgrades**: Upgrade walls to towers dynamically
 - **Visual Feedback**: Targeting indicators, selection systems, and tooltips
-- **Area of Effect (AOE)**: Some projectiles have damage falloff
 - **Homing Projectiles**: Missiles that track and redirect to new targets
 
 ### UI/UX
 - **Build Panel**: Tower selection with tooltips showing DPS, range, attack speed
-- **Selection System**: Multi-select support with shift/control
 - **Upgrade Panel**: Context-sensitive upgrade options
+- **Selection System**: Multi-select support with shift/control
 - **Information Display**: Real-time stats for selected objects
 
 ## Architecture
@@ -54,11 +53,6 @@ A Unity tower defense game demonstrating Object-Oriented Programming principles 
 - **Auto-targeting**: Towers automatically engage enemies based on targeting mode
 
 ## Technical Notes
-
-### Performance
-- **Object Pooling**: Efficient projectile and enemy management
-- **LOD System**: Distance-based visual quality adjustments
-- **Optimized Targeting**: Efficient enemy detection and selection
 
 ### Extensibility
 - **ScriptableObjects**: Easy tower and enemy configuration
