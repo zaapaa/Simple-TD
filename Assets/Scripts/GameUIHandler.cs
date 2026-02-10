@@ -179,10 +179,14 @@ public class GameUIHandler : MonoBehaviour
         {
             GameManager.instance.SetGameSpeed(4f);
         }
-        if (Keyboard.current.tabKey.wasPressedThisFrame)
+        if (Keyboard.current.cKey.wasPressedThisFrame)
         {
             cameraOrthographic.SetActive(!cameraOrthographic.activeSelf);
             cameraPerspective.SetActive(!cameraPerspective.activeSelf);
+        }
+        if (Keyboard.current.tabKey.wasPressedThisFrame)
+        {
+            waveSpawner.StartNextWave();
         }
         ShowSelectedInformation();
     }
