@@ -1,6 +1,6 @@
 # Simple tower defense game
 
-- 2 level layouts
+- ~~2 level layouts~~
 - Player places walls/towers to restrict enemy movements.
 - Towers shoot enemies.
 - Enemies spawn in waves.
