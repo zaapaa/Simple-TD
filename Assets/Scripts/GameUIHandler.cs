@@ -84,6 +84,7 @@ public class GameUIHandler : MonoBehaviour
         if (Mouse.current.leftButton.wasPressedThisFrame)
         {
             HidePanel(buildPanel);
+            HidePanel(upgradePanel);
             if (currentPlacement == null)
             {
                 // Don't clear selection if clicking on UI

@@ -47,6 +47,7 @@ public class EnemyWaveSpawner : MonoBehaviour
 
     public void StartNextWave()
     {
+        GameManager.instance.waveNumberText.GetComponent<TextMeshProUGUI>().text = $"Current Wave: {currentWave}";
         StartCoroutine(SpawnWave());
         currentWave++;
         IncreaseWaveDifficulty();
@@ -64,11 +65,11 @@ public class EnemyWaveSpawner : MonoBehaviour
             yield return new WaitForSeconds(enemyWaitInterval);
         }
     }
-    public void SpawnEnemy(GameObject enemyPrefab, Vector3 spawnPosition, Color color)
+    public void SpawnEnemy(GameObject enemyPrefab, Vector3 spawnPosition, Color color, float distanceMoved = 0f)
     {
         GameObject enemy = Instantiate(enemyPrefab, spawnPosition, enemyPrefab.transform.rotation);
         enemy.transform.parent = transform;
-        enemy.GetComponent<Enemy>().Initialize(spawnPoint, endpoint, this, color);
+        enemy.GetComponent<Enemy>().Initialize(spawnPoint, endpoint, this, color, distanceMoved);
         enemy.GetComponent<Enemy>().maxHealth *= maxHealthIncrease;
     }
     Dictionary<GameObject, int> GetEnemySpawnCount()

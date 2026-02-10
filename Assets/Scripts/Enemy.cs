@@ -40,7 +40,7 @@ public class Enemy : MonoBehaviour, ISelectable
     private const float k_PathRecalculationInterval = 0.5f;
     private float lastPathRecalculationTime;
 
-    public void Initialize(Transform spawn, Transform end, EnemyWaveSpawner spawner, Color color)
+    public void Initialize(Transform spawn, Transform end, EnemyWaveSpawner spawner, Color color, float distanceMoved = 0f)
     {
         spawnPoint = spawn;
         endPoint = end;
@@ -48,6 +48,7 @@ public class Enemy : MonoBehaviour, ISelectable
         agent = GetComponent<NavMeshAgent>();
         model = transform.Find("Model")?.gameObject;
         model.GetComponent<Renderer>().material.color = color;
+        this.distanceMoved = distanceMoved;
         CalculateTotalPathLength();
     }
 
@@ -242,8 +243,8 @@ public class Enemy : MonoBehaviour, ISelectable
         if (enemyType == EnemyType.Big)
         {
             Color myColor = model.GetComponent<Renderer>().material.color;
-            waveSpawner.SpawnEnemy(waveSpawner.enemyPrefabs[0], transform.position, myColor);
-            waveSpawner.SpawnEnemy(waveSpawner.enemyPrefabs[0], transform.position, myColor);
+            waveSpawner.SpawnEnemy(waveSpawner.enemyPrefabs[0], transform.position, myColor, distanceMoved);
+            waveSpawner.SpawnEnemy(waveSpawner.enemyPrefabs[0], transform.position, myColor, distanceMoved);
         }
         Destroy(gameObject);
     }
