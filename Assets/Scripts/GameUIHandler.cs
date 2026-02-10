@@ -25,6 +25,8 @@ public class GameUIHandler : MonoBehaviour
     private GameObject selectedBuildPlaceable = null;
     public EnemyWaveSpawner waveSpawner = null;
     public GameObject enemyDirectionArrow;
+    public GameObject cameraPerspective;
+    public GameObject cameraOrthographic;
     public static GameUIHandler instance = null;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -176,6 +178,11 @@ public class GameUIHandler : MonoBehaviour
         if (Keyboard.current.f3Key.wasPressedThisFrame)
         {
             GameManager.instance.SetGameSpeed(4f);
+        }
+        if (Keyboard.current.tabKey.wasPressedThisFrame)
+        {
+            cameraOrthographic.SetActive(!cameraOrthographic.activeSelf);
+            cameraPerspective.SetActive(!cameraPerspective.activeSelf);
         }
         ShowSelectedInformation();
     }

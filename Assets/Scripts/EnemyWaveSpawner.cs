@@ -57,17 +57,18 @@ public class EnemyWaveSpawner : MonoBehaviour
     {
         Dictionary<GameObject, int> enemySpawnCount = GetEnemySpawnCount();
         List<GameObject> randomSpawnWave = GetRandomizedSpawnWave(enemySpawnCount);
+        Color randomColor = Random.ColorHSV(0f,1f,1f,1f);
         foreach (var enemy in randomSpawnWave)
         {
-            SpawnEnemy(enemy, spawnPoint.position);
+            SpawnEnemy(enemy, spawnPoint.position, randomColor);
             yield return new WaitForSeconds(enemyWaitInterval);
         }
     }
-    public void SpawnEnemy(GameObject enemyPrefab, Vector3 spawnPosition)
+    public void SpawnEnemy(GameObject enemyPrefab, Vector3 spawnPosition, Color color)
     {
         GameObject enemy = Instantiate(enemyPrefab, spawnPosition, enemyPrefab.transform.rotation);
         enemy.transform.parent = transform;
-        enemy.GetComponent<Enemy>().Initialize(spawnPoint, endpoint, this);
+        enemy.GetComponent<Enemy>().Initialize(spawnPoint, endpoint, this, color);
         enemy.GetComponent<Enemy>().maxHealth *= maxHealthIncrease;
     }
     Dictionary<GameObject, int> GetEnemySpawnCount()

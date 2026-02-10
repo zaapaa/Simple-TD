@@ -20,8 +20,11 @@ public class Enemy : MonoBehaviour, ISelectable
     public EnemyType enemyType;
 
     private NavMeshAgent agent;
+    private Vector3[] currentPath;
+    private int currentPathIndex;
     private Transform endPoint;
     private Transform spawnPoint;
+    private float distanceMoved;
     private float totalPathLength;
     private EnemyWaveSpawner waveSpawner;
     private GameObject selectionVisual;
@@ -33,13 +36,18 @@ public class Enemy : MonoBehaviour, ISelectable
     private GameObject forceTargetVisual;
     private List<Tower> targetedBy = new List<Tower>();
     private List<Tower> forceTargetedBy = new List<Tower>();
+    private bool needsPathRecalculation = false;
+    private const float k_PathRecalculationInterval = 0.5f;
+    private float lastPathRecalculationTime;
 
-    public void Initialize(Transform spawn, Transform end, EnemyWaveSpawner spawner)
+    public void Initialize(Transform spawn, Transform end, EnemyWaveSpawner spawner, Color color)
     {
         spawnPoint = spawn;
         endPoint = end;
         waveSpawner = spawner;
         agent = GetComponent<NavMeshAgent>();
+        model = transform.Find("Model")?.gameObject;
+        model.GetComponent<Renderer>().material.color = color;
         CalculateTotalPathLength();
     }
 
@@ -47,17 +55,17 @@ public class Enemy : MonoBehaviour, ISelectable
     void Start()
     {
         selectionVisual = transform.Find("Selection")?.gameObject;
-        model = transform.Find("Model")?.gameObject;
         targetVisual = transform.Find("Target")?.gameObject;
         forceTargetVisual = transform.Find("ForceTarget")?.gameObject;
         health = maxHealth;
-        agent.speed = speed;
 
         // Get healthbar image component
         healthBarImage = GetComponentInChildren<Image>();
-        agent.SetDestination(endPoint.position);
+
         agent.updateRotation = false;
-        
+        agent.updatePosition = false;
+        CalculatePath();
+
         if (UnityEngine.Random.value < 0.5f)
         {
             rotationSpeed *= -1f;
@@ -68,18 +76,29 @@ public class Enemy : MonoBehaviour, ISelectable
     // Update is called once per frame
     void Update()
     {
-        // Update progress based on remaining distance
-        if (endPoint != null && totalPathLength > 0)
+        // Check if we need to recalculate path
+        if (needsPathRecalculation || Time.time - lastPathRecalculationTime > k_PathRecalculationInterval)
         {
-            progress = 1f - (agent.remainingDistance / totalPathLength);
+            CalculatePath();
+            needsPathRecalculation = false;
+            lastPathRecalculationTime = Time.time;
         }
 
+        // Move along the path manually
+        if (currentPath != null && currentPath.Length > 0 && currentPathIndex < currentPath.Length)
+        {
+            MoveAlongPath();
+        }
+
+        progress = distanceMoved / totalPathLength;
+
         // Check if reached destination
-        if (Vector3.Distance(transform.position, endPoint.position) < 0.5f)
+        if (Vector3.Distance(transform.position, endPoint.position) < 2f)
         {
             ReachEndpoint();
         }
         model.transform.Rotate(Vector3.up, rotationSpeed * Time.deltaTime);
+        selectionVisual.transform.rotation = model.transform.rotation;
         if (targetedBy.Count > 0)
         {
             targetVisual.SetActive(true);
@@ -96,12 +115,66 @@ public class Enemy : MonoBehaviour, ISelectable
         {
             forceTargetVisual.SetActive(false);
         }
-
     }
     IEnumerator RemoveSpawnImmunity()
     {
         yield return new WaitForSeconds(1f);
         hasSpawnImmunity = false;
+    }
+
+    void CalculatePath()
+    {
+        if (agent == null || endPoint == null) return;
+
+        NavMeshPath path = new NavMeshPath();
+        if (NavMesh.CalculatePath(transform.position, endPoint.position, NavMesh.AllAreas, path) && path.status == NavMeshPathStatus.PathComplete)
+        {
+            currentPath = path.corners;
+            currentPathIndex = 1;
+        }
+        else
+        {
+            // Fallback to direct path
+            currentPath = new Vector3[] { endPoint.position };
+            currentPathIndex = 1;
+        }
+    }
+
+    void MoveAlongPath()
+    {
+        if (currentPathIndex >= currentPath.Length) return;
+
+        Vector3 targetPoint = currentPath[currentPathIndex];
+        Vector3 direction = (targetPoint - transform.position).normalized;
+
+        // Constant speed movement
+        float moveDistance = speed * Time.deltaTime;
+
+        // Check if we'll reach or pass the target point this frame
+        float distanceToTarget = Vector3.Distance(transform.position, targetPoint);
+
+        if (distanceToTarget <= moveDistance)
+        {
+            while (distanceToTarget <= moveDistance)
+            {
+                moveDistance -= distanceToTarget;
+                distanceMoved += distanceToTarget;
+                // We've reached this corner, move to next one
+                transform.position = targetPoint;
+                currentPathIndex++;
+                if (currentPathIndex >= currentPath.Length)
+                {
+                    ReachEndpoint();
+                    return;
+                }
+                targetPoint = currentPath[currentPathIndex];
+                direction = (targetPoint - transform.position).normalized;
+                distanceToTarget = Vector3.Distance(transform.position, targetPoint);
+            }
+        } else {
+            transform.position += direction * moveDistance;
+            distanceMoved += moveDistance;
+        }
     }
 
     void CalculateTotalPathLength()
@@ -127,6 +200,12 @@ public class Enemy : MonoBehaviour, ISelectable
             length += Vector3.Distance(corners[i], corners[i + 1]);
         }
         return length;
+    }
+
+    public void OnPlaceablePlaced()
+    {
+        // Force path recalculation when a new placeable is placed
+        needsPathRecalculation = true;
     }
 
     void ReachEndpoint()
@@ -162,8 +241,9 @@ public class Enemy : MonoBehaviour, ISelectable
         GameUIHandler.instance.RemoveSelection(this);
         if (enemyType == EnemyType.Big)
         {
-            waveSpawner.SpawnEnemy(waveSpawner.enemyPrefabs[0], transform.position);
-            waveSpawner.SpawnEnemy(waveSpawner.enemyPrefabs[0], transform.position);
+            Color myColor = model.GetComponent<Renderer>().material.color;
+            waveSpawner.SpawnEnemy(waveSpawner.enemyPrefabs[0], transform.position, myColor);
+            waveSpawner.SpawnEnemy(waveSpawner.enemyPrefabs[0], transform.position, myColor);
         }
         Destroy(gameObject);
     }
@@ -256,6 +336,21 @@ public class Enemy : MonoBehaviour, ISelectable
             speed = speed,
             reward = reward
         };
+    }
+
+    void OnDrawGizmos()
+    {
+        if (currentPath != null)
+        {
+            Gizmos.color = Color.green;
+            for (int i = 0; i < currentPath.Length - 1; i++)
+            {
+                Gizmos.DrawLine(currentPath[i], currentPath[i + 1]);
+                Gizmos.DrawWireSphere(currentPath[i], 0.1f);
+            }
+        }
+
+
     }
 }
 

@@ -8,7 +8,8 @@ public class Placeable : MonoBehaviour, ISelectable
     public string description;
     public Sprite UIIcon;
     public float placementCost;
-    public float placementRadius = 2.5f;
+    public float placementRadius = 1.3f;
+    public float placementRadiusEnemy = 2f;
     public bool isBeingPlaced = true;
     public Color validPlacementColor = Color.green;
     public Color invalidPlacementColor = Color.red;
@@ -149,7 +150,7 @@ public class Placeable : MonoBehaviour, ISelectable
             {
                 // Use spherical distance for enemies (assuming they're roughly circular)
                 float distance = Vector3.Distance(position, allColliders[i].transform.position);
-                if (distance < placementRadius)
+                if (distance < placementRadiusEnemy)
                 {
                     obstructingPlaceable = null;
                     return false;
@@ -217,9 +218,22 @@ public class Placeable : MonoBehaviour, ISelectable
             transform.position = new Vector3(transform.position.x, 0f, transform.position.z);
             NavMeshObstacle navObstacle = GetComponent<NavMeshObstacle>();
             navObstacle.enabled = true;
+            
+            // Notify all enemies to recalculate their paths
+            NotifyEnemiesOfPlacement();
+            
             return true;
         }
         return false;
+    }
+
+    private void NotifyEnemiesOfPlacement()
+    {
+        // Find all active enemies and notify them
+        foreach (Transform child in GameUIHandler.instance.waveSpawner.transform)
+        {
+            child.GetComponent<Enemy>().OnPlaceablePlaced();
+        }
     }
 
     public virtual void Select()
