@@ -84,7 +84,10 @@ public class GameUIHandler : MonoBehaviour
         if (Mouse.current.leftButton.wasPressedThisFrame)
         {
             HidePanel(buildPanel);
-            HidePanel(upgradePanel);
+            if (GetObjectAtMousePosition()?.tag != "Placeable")
+            {
+                HidePanel(upgradePanel);
+            }
             if (currentPlacement == null)
             {
                 // Don't clear selection if clicking on UI
@@ -131,10 +134,10 @@ public class GameUIHandler : MonoBehaviour
                 ShowPanel(upgradePanel, GetUpgradePrefabs());
             }
         }
-        
+
         if (Keyboard.current.digit1Key.wasReleasedThisFrame)
         {
-            if(GameManager.instance.HasEnoughMoney(placeablePrefabs[0].GetComponent<Placeable>().placementCost))
+            if (GameManager.instance.HasEnoughMoney(placeablePrefabs[0].GetComponent<Placeable>().placementCost))
             {
                 SelectBuildPlaceable(placeablePrefabs[0]);
                 StartPlacement();
@@ -142,7 +145,7 @@ public class GameUIHandler : MonoBehaviour
         }
         if (Keyboard.current.digit2Key.wasReleasedThisFrame)
         {
-            if(GameManager.instance.HasEnoughMoney(placeablePrefabs[1].GetComponent<Placeable>().placementCost))
+            if (GameManager.instance.HasEnoughMoney(placeablePrefabs[1].GetComponent<Placeable>().placementCost))
             {
                 SelectBuildPlaceable(placeablePrefabs[1]);
                 StartPlacement();
@@ -150,7 +153,7 @@ public class GameUIHandler : MonoBehaviour
         }
         if (Keyboard.current.digit3Key.wasReleasedThisFrame)
         {
-            if(GameManager.instance.HasEnoughMoney(placeablePrefabs[2].GetComponent<Placeable>().placementCost))
+            if (GameManager.instance.HasEnoughMoney(placeablePrefabs[2].GetComponent<Placeable>().placementCost))
             {
                 SelectBuildPlaceable(placeablePrefabs[2]);
                 StartPlacement();
@@ -158,7 +161,7 @@ public class GameUIHandler : MonoBehaviour
         }
         if (Keyboard.current.digit4Key.wasReleasedThisFrame)
         {
-            if(GameManager.instance.HasEnoughMoney(placeablePrefabs[3].GetComponent<Placeable>().placementCost))
+            if (GameManager.instance.HasEnoughMoney(placeablePrefabs[3].GetComponent<Placeable>().placementCost))
             {
                 SelectBuildPlaceable(placeablePrefabs[3]);
                 StartPlacement();

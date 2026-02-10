@@ -7836,8 +7836,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyWaveSpawner
   timeBetweenWavesInitial: 60
-  timeBetweenWavesDecrease: 1
-  timeBetweenWavesMin: 15
+  timeBetweenWavesDecrease: 0.5
+  timeBetweenWavesMin: 20
   waveBudget: 150
   waveBudgetIncrease: 1.2
   enemyWaitIntervalInitial: 1
